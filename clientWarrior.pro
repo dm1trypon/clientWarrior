@@ -27,11 +27,15 @@ CONFIG += c++11
 SOURCES += \
         main.cpp \
         widget.cpp \
-    client.cpp
+    client.cpp \
+    workjson.cpp \
+    player.cpp
 
 HEADERS += \
         widget.h \
-    client.h
+    client.h \
+    workjson.h \
+    player.h
 
 FORMS += \
         widget.ui

@@ -25,6 +25,8 @@ public:
 
 private slots:
     void connectToServer();
+    void onConnected();
+
 private:
     Ui::Widget *ui;
     QGraphicsScene *_scene;
@@ -40,6 +42,7 @@ private:
     Client *_client;
     QString _host;
     QString _port;
+    QString _nickname;
 
     void createElements();
 };

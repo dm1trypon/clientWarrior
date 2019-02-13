@@ -1,4 +1,6 @@
 #include "widget.h"
+#include "workjson.h"
+#include "player.h"
 #include "ui_widget.h"
 
 Widget::Widget(QWidget *parent) :
@@ -7,6 +9,7 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     createElements();
+    connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
 }
 
 Widget::~Widget()
@@ -38,10 +41,27 @@ void Widget::createElements()
     setLayout(_mainLayout);
 }
 
+void Widget::onConnected()
+{
+    _view->show();
+    _labelNickname->hide();
+    _labelHost->hide();
+    _labelPort->hide();
+    _lineEditHost->hide();
+    _lineEditNickname->hide();
+    _lineEditPort->hide();
+    _buttonConnect->hide();
+
+    Player *player = new Player(0, 0);
+    _scene->addItem(player);
+//    player->setPos(posX, posY);
+}
+
 void Widget::connectToServer()
 {
-
     _host = _lineEditHost->text();
     _port = _lineEditPort->text();
-    _client = new Client(QUrl(_host + ":" + _port));
+    _nickname = _lineEditNickname->text();
+    WorkJson::Instance().setNickname(_nickname);
+    _client = new Client(QUrl("ws://" + _host + ":" + _port));
 }
