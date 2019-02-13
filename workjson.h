@@ -6,6 +6,7 @@
 #include <QObject>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QGraphicsScene>
 #include <QMap>
 
 class WorkJson : public QObject
@@ -15,8 +16,10 @@ class WorkJson : public QObject
 private:
     WorkJson(const WorkJson& root) = delete;
     WorkJson& operator = (const WorkJson&) = delete;
+
     QString _nickname;
     QMap <QString, Player *> _players;
+    QGraphicsScene *_scene;
 
 public:
     WorkJson(){}
@@ -25,7 +28,8 @@ public:
     void setNickname(QString nickname);
     QString getNickname();
     QString toJsonVerify(QString method);
-    QString toJsonKey(const QString &key, bool hold);
+    void toJsonKey(const QString &key, bool hold);
+    void setScene(QGraphicsScene *scene);
 signals:
     void signalSend(QString);
     void signalConnected();

@@ -1,6 +1,5 @@
 #include "widget.h"
 #include "workjson.h"
-#include "player.h"
 #include "ui_widget.h"
 
 Widget::Widget(QWidget *parent) :
@@ -19,8 +18,9 @@ Widget::~Widget()
 
 void Widget::createElements()
 {
+    _scene = new QGraphicsScene(0, 0, 1000, 1000, this);
     _mainLayout = new QVBoxLayout;
-    _view = new QGraphicsView;
+    _view = new QGraphicsView(this);
     _view->hide();
     _labelNickname = new QLabel("Nickname:");
     _labelHost = new QLabel("Host:");
@@ -38,6 +38,8 @@ void Widget::createElements()
     _mainLayout->addWidget(_lineEditPort);
     _mainLayout->addWidget(_buttonConnect);
     _mainLayout->addWidget(_view);
+    _view->setScene(_scene);
+    WorkJson::Instance().setScene(_scene);
     setLayout(_mainLayout);
 }
 
@@ -51,10 +53,6 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-
-    Player *player = new Player(0, 0);
-    _scene->addItem(player);
-//    player->setPos(posX, posY);
 }
 
 void Widget::connectToServer()

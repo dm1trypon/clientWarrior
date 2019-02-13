@@ -1,6 +1,7 @@
 #include "workjson.h"
 
 #include <QJsonArray>
+#include <QDebug>
 
 WorkJson &WorkJson::Instance()
 {
@@ -24,7 +25,12 @@ void WorkJson::fromJson(const QString &data)
         QMap <QString, qreal> position;
         position.insert("x", dataJsonObj.value("pos_x").toInt());
         position.insert("y", dataJsonObj.value("pos_y").toInt());
-        _players.insert(_nickname, new Player(position));
+        Player *player = new Player(position);
+        qDebug() << "1";
+        _scene->addItem(player);
+        qDebug() << "2";
+        _players.insert(_nickname, player);
+        qDebug() << "3";
 
         if (dataJsonObj.value("nickname").toString() == _nickname)
         {
@@ -41,9 +47,14 @@ void WorkJson::fromJson(const QString &data)
             QMap <QString, qreal> position;
             position.insert("x", player.toObject().value("pos_x").toInt());
             position.insert("y", player.toObject().value("pos_y").toInt());
-//            player.toObject->setPosition(position);
+            _players[player.toObject().value("nickname").toString()]->setPosition(position);
         }
     }
+}
+
+void WorkJson::setScene(QGraphicsScene *scene)
+{
+    _scene = scene;
 }
 
 void WorkJson::setNickname(QString nickname)
@@ -66,7 +77,7 @@ QString WorkJson::toJsonVerify(QString method)
     return data;
 }
 
-QString WorkJson::toJsonKey(const QString &key, bool hold)
+void WorkJson::toJsonKey(const QString &key, bool hold)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "control");
@@ -74,6 +85,6 @@ QString WorkJson::toJsonKey(const QString &key, bool hold)
     dataJsonObj.insert("key", key);
     dataJsonObj.insert("hold", hold);
     QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
-    return data;
+    QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
+    emit signalSend(data);
 }

@@ -6,6 +6,7 @@
 Player::Player(QMap <QString, qreal> position) : QObject(), QGraphicsPixmapItem (nullptr)
 {
     setPixmap(QPixmap(PATH_TO_PLAYER_IMG));
+    setPos(position["x"], position["y"]);
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
