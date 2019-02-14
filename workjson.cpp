@@ -21,33 +21,48 @@ void WorkJson::fromJson(const QString &data)
 
     if (method == "connection")
     {
-        _nickname = dataJsonObj.value("nickname").toString();
-        QMap <QString, qreal> position;
-        position.insert("x", dataJsonObj.value("pos_x").toInt());
-        position.insert("y", dataJsonObj.value("pos_y").toInt());
-        Player *player = new Player(position);
-        qDebug() << "1";
-        _scene->addItem(player);
-        qDebug() << "2";
-        _players.insert(_nickname, player);
-        qDebug() << "3";
+        QString nickname = dataJsonObj.value("nickname").toString();
 
-        if (dataJsonObj.value("nickname").toString() == _nickname)
+        if (dataJsonObj.value("nickname").toString() == nickname)
         {
             emit signalConnected();
         }
+    }
+
+    if (method == "disconnection")
+    {
+        QString nickname = dataJsonObj.value("nickname").toString();
+
+        if (!_players.contains(nickname))
+        {
+            qWarning() << "Warning! Player is not exist for delete from game scene!";
+            return;
+        }
+
+        _players[nickname]->deleteLater();
+        _players.remove(nickname);
     }
 
     if (method == "objects")
     {
         QJsonArray playersJsonArr = dataJsonObj.value("players").toArray();
 
-        foreach (QJsonValue player, playersJsonArr)
+        foreach (QJsonValue playerValue, playersJsonArr)
         {
+            QString nickname = playerValue.toObject().value("nickname").toString();
+
             QMap <QString, qreal> position;
-            position.insert("x", player.toObject().value("pos_x").toInt());
-            position.insert("y", player.toObject().value("pos_y").toInt());
-            _players[player.toObject().value("nickname").toString()]->setPosition(position);
+            position.insert("x", playerValue.toObject().value("pos_x").toInt());
+            position.insert("y", playerValue.toObject().value("pos_y").toInt());
+
+            if (!_players.contains(nickname))
+            {
+                Player *player = new Player(position);
+                _scene->addItem(player);
+                _players.insert(playerValue.toObject().value("nickname").toString(), player);
+            }
+
+            _players[playerValue.toObject().value("nickname").toString()]->setPosition(position);
         }
     }
 }

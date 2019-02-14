@@ -53,6 +53,7 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
+    this->showFullScreen();
 }
 
 void Widget::connectToServer()

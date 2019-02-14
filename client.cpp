@@ -29,7 +29,7 @@ void Client::onSend(QString data)
 
 void Client::onTextMessageReceived(QString data)
 {
-    qDebug().noquote() << "Message received:" << data;
+//    qDebug().noquote() << "Message received:" << data;
     WorkJson::Instance().fromJson(data);
 }
 
