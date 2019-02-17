@@ -22,14 +22,14 @@ void Client::onConnected()
             this, &Client::onTextMessageReceived);
 }
 
-void Client::onSend(QString data)
+void Client::onSend(const QString &data)
 {
     m_webSocket.sendTextMessage(data);
 }
 
-void Client::onTextMessageReceived(QString data)
+void Client::onTextMessageReceived(const QString &data)
 {
-//    qDebug().noquote() << "Message received:" << data;
+    qDebug().noquote() << "Message received:" << data;
     WorkJson::Instance().fromJson(data);
 }
 

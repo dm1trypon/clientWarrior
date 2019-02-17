@@ -9,8 +9,8 @@ class Player : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Player(QMap <QString, qreal> position);
-    void setPosition(QMap<QString, qreal> position);
+    Player(const QString &_nickname, const QMap<QString, qreal> position);
+    void setPosition(const QMap<QString, qreal> position);
 
 private:
     const QString PATH_TO_PLAYER_IMG = ":/img/player.png";
@@ -19,7 +19,7 @@ private:
     const QString UP = "up";
     const QString DOWN = "down";
 
-    void onHold(QKeyEvent *event, bool hold);
+    void onHold(QKeyEvent *event, const bool hold);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

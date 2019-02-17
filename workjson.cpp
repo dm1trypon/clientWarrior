@@ -45,25 +45,92 @@ void WorkJson::fromJson(const QString &data)
 
     if (method == "objects")
     {
-        QJsonArray playersJsonArr = dataJsonObj.value("players").toArray();
-
-        foreach (QJsonValue playerValue, playersJsonArr)
+        if (!checkFields(dataJsonObj))
         {
-            QString nickname = playerValue.toObject().value("nickname").toString();
-
-            QMap <QString, qreal> position;
-            position.insert("x", playerValue.toObject().value("pos_x").toInt());
-            position.insert("y", playerValue.toObject().value("pos_y").toInt());
-
-            if (!_players.contains(nickname))
-            {
-                Player *player = new Player(position);
-                _scene->addItem(player);
-                _players.insert(playerValue.toObject().value("nickname").toString(), player);
-            }
-
-            _players[playerValue.toObject().value("nickname").toString()]->setPosition(position);
+            return;
         }
+
+        toScene(dataJsonObj);
+        toPlayers(dataJsonObj);
+    }
+}
+
+bool WorkJson::checkFields(const QJsonObject dataJsonObj)
+{
+    if (!dataJsonObj.contains("players"))
+    {
+        qWarning() << "Warning! Field 'players' is not exist!";
+        return false;
+    }
+
+    if (!dataJsonObj.contains("scene"))
+    {
+        qWarning() << "Warning! Field 'scene' is not exist!";
+        return false;
+    }
+
+    if (!dataJsonObj.value("players").isArray())
+    {
+        qWarning() << "Warning! Field 'players' is not array!";
+        return false;
+    }
+
+    if (!dataJsonObj.value("scene").isObject())
+    {
+        qWarning() << "Warning! Field 'scene' is not object!";
+        return false;
+    }
+
+    return true;
+}
+
+void WorkJson::toScene(const QJsonObject dataJsonObj)
+{
+    QJsonObject sceneJsonObject = dataJsonObj.value("scene").toObject();
+
+    QMap <QString, qreal> position;
+    position.insert("x", sceneJsonObject.value("pos_x").toInt());
+    position.insert("y", sceneJsonObject.value("pos_y").toInt());
+
+    QMap <QString, qreal> size;
+    size.insert("width", sceneJsonObject.value("width").toInt());
+    size.insert("height", sceneJsonObject.value("height").toInt());
+
+    if (!_gameScene.contains("scene"))
+    {
+        Scene *gameScene = new Scene(_camera.setPositionObjects(position, _sizePlayer), size);
+        _scene->addItem(gameScene);
+        _gameScene.insert("scene", gameScene);
+    }
+
+    _gameScene["scene"]->setPosition(_camera.setPositionObjects(position, _sizePlayer));
+}
+
+void WorkJson::toPlayers(const QJsonObject dataJsonObj)
+{
+    QJsonArray playersJsonArr = dataJsonObj.value("players").toArray();
+
+    foreach (QJsonValue playerValue, playersJsonArr)
+    {
+        QString nickname = playerValue.toObject().value("nickname").toString();
+
+        QMap <QString, qreal> position;
+        position.insert("x", playerValue.toObject().value("pos_x").toInt());
+        position.insert("y", playerValue.toObject().value("pos_y").toInt());
+
+        if (nickname == _nickname)
+        {
+            _camera.setOffsetFactor(position, _viewCenter);
+        }
+
+        if (!_players.contains(nickname))
+        {
+            Player *player = new Player(nickname, _camera.setPositionObjects(position, _sizePlayer));
+            _scene->addItem(player);
+            _players.insert(playerValue.toObject().value("nickname").toString(), player);
+        }
+
+        _players[playerValue.toObject().value("nickname").toString()]->setPosition(_camera.setPositionObjects(position, _sizePlayer));
     }
 }
 
@@ -72,7 +139,17 @@ void WorkJson::setScene(QGraphicsScene *scene)
     _scene = scene;
 }
 
-void WorkJson::setNickname(QString nickname)
+void WorkJson::setViewCenter(const QMap <QString, qreal> viewCenter)
+{
+    _viewCenter = viewCenter;
+}
+
+void WorkJson::setSizePlayer(const QMap <QString, qreal> sizePlayer)
+{
+    _sizePlayer = sizePlayer;
+}
+
+void WorkJson::setNickname(const QString &nickname)
 {
     _nickname = nickname;
 }
@@ -82,7 +159,7 @@ QString WorkJson::getNickname()
     return _nickname;
 }
 
-QString WorkJson::toJsonVerify(QString method)
+QString WorkJson::toJsonVerify(const QString &method)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", method);
@@ -92,7 +169,7 @@ QString WorkJson::toJsonVerify(QString method)
     return data;
 }
 
-void WorkJson::toJsonKey(const QString &key, bool hold)
+void WorkJson::toJsonKey(const QString &key, const bool hold)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "control");

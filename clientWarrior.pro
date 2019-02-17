@@ -29,13 +29,17 @@ SOURCES += \
         widget.cpp \
     client.cpp \
     workjson.cpp \
-    player.cpp
+    player.cpp \
+    camera.cpp \
+    scene.cpp
 
 HEADERS += \
         widget.h \
     client.h \
     workjson.h \
-    player.h
+    player.h \
+    camera.h \
+    scene.h
 
 FORMS += \
         widget.ui

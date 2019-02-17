@@ -3,16 +3,27 @@
 
 #include <QDebug>
 
-Player::Player(QMap <QString, qreal> position) : QObject(), QGraphicsPixmapItem (nullptr)
+Player::Player(const QString &nickname, const QMap <QString, qreal> position) :
+    QObject(), QGraphicsPixmapItem (nullptr)
 {
     setPixmap(QPixmap(PATH_TO_PLAYER_IMG));
     setPos(position["x"], position["y"]);
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
     setFlag(QGraphicsItem::ItemIsFocusable);
     setFocus();
+
+    if (WorkJson::Instance().getNickname() == nickname)
+    {
+        QMap <QString, qreal> size;
+        size.insert("width", pixmap().width());
+        size.insert("height", pixmap().height());
+
+        WorkJson::Instance().setSizePlayer(size);
+    }
+
 }
 
-void Player::setPosition(QMap <QString, qreal> position)
+void Player::setPosition(const QMap <QString, qreal> position)
 {
     setPos(position["x"], position["y"]);
 }
@@ -41,7 +52,7 @@ void Player::keyReleaseEvent(QKeyEvent *event)
     onHold(event, false);
 }
 
-void Player::onHold(QKeyEvent *event, bool hold)
+void Player::onHold(QKeyEvent *event, const bool hold)
 {
     switch (event->key()) {
     case Qt::Key_Left:

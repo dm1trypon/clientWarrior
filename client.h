@@ -15,9 +15,9 @@ signals:
 
 private slots:
     void onConnected();
-    void onTextMessageReceived(QString message);
+    void onTextMessageReceived(const QString &message);
 
-    void onSend(QString data);
+    void onSend(const QString &data);
 private:
     QWebSocket m_webSocket;
     QUrl m_url;

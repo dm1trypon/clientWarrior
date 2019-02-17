@@ -2,6 +2,8 @@
 #define WORKJSON_H
 
 #include "player.h"
+#include "scene.h"
+#include "camera.h"
 
 #include <QObject>
 #include <QJsonDocument>
@@ -19,17 +21,27 @@ private:
 
     QString _nickname;
     QMap <QString, Player *> _players;
+    QMap <QString, Scene *> _gameScene;
+    QMap <QString, qreal> _viewCenter;
+    QMap <QString, qreal> _sizePlayer;
     QGraphicsScene *_scene;
+    Camera _camera;
 
+    bool checkFields(const QJsonObject dataJsonObj);
+    void toScene(const QJsonObject dataJsonObj);
+    void toPlayers(const QJsonObject dataJsonObj);
 public:
     WorkJson(){}
     static WorkJson& Instance();
+
     void fromJson(const QString &data);
-    void setNickname(QString nickname);
+    void setNickname(const QString &nickname);
     QString getNickname();
-    QString toJsonVerify(QString method);
-    void toJsonKey(const QString &key, bool hold);
+    QString toJsonVerify(const QString &method);
+    void toJsonKey(const QString &key, const bool hold);
     void setScene(QGraphicsScene *scene);
+    void setViewCenter(const QMap<QString, qreal> viewCenter);
+    void setSizePlayer(const QMap<QString, qreal> sizePlayer);
 signals:
     void signalSend(QString);
     void signalConnected();

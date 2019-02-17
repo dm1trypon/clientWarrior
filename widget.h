@@ -1,8 +1,6 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include "client.h"
-
 #include <QWidget>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -39,12 +37,15 @@ private:
     QLabel *_labelNickname;
     QLabel *_labelHost;
     QLabel *_labelPort;
-    Client *_client;
     QString _host;
     QString _port;
     QString _nickname;
 
     void createElements();
+
+    void setViewCenter();
+protected:
+    void resizeEvent(QResizeEvent *);
 };
 
 #endif // WIDGET_H
