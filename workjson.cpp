@@ -125,7 +125,11 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
 
         if (!_players.contains(nickname))
         {
-            Player *player = new Player(nickname, _camera.setPositionObjects(position, _sizePlayer));
+            QMap <QString, qreal> size;
+            size.insert("width", playerValue.toObject().value("width").toInt());
+            size.insert("height", playerValue.toObject().value("height").toInt());
+
+            Player *player = new Player(nickname, _camera.setPositionObjects(position, _sizePlayer), size);
             _scene->addItem(player);
             _players.insert(playerValue.toObject().value("nickname").toString(), player);
         }

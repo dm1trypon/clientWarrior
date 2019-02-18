@@ -23,6 +23,7 @@ void Widget::createElements()
     _mainLayout = new QVBoxLayout;
 
     _view = new QGraphicsView(this);
+    _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -77,7 +78,8 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-    showFullScreen();
+//    showFullScreen();
+    showMaximized();
     setViewCenter();
     _mainLayout->setMargin(0);
 }

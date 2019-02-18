@@ -3,10 +3,10 @@
 
 #include <QDebug>
 
-Player::Player(const QString &nickname, const QMap <QString, qreal> position) :
+Player::Player(const QString &nickname, const QMap <QString, qreal> position, const QMap <QString, qreal> size) :
     QObject(), QGraphicsPixmapItem (nullptr)
 {
-    setPixmap(QPixmap(PATH_TO_PLAYER_IMG));
+    setPixmap(QPixmap(PATH_TO_PLAYER_IMG).scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
     setPos(position["x"], position["y"]);
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
     setFlag(QGraphicsItem::ItemIsFocusable);
