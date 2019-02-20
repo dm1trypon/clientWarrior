@@ -3,6 +3,8 @@
 #include "client.h"
 #include "ui_widget.h"
 
+#include <QDesktopWidget>
+
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Widget)
@@ -11,6 +13,7 @@ Widget::Widget(QWidget *parent) :
     createElements();
     connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
     setAttribute(Qt::WA_KeyCompression);
+
 }
 
 Widget::~Widget()
@@ -20,7 +23,12 @@ Widget::~Widget()
 
 void Widget::createElements()
 {
-    _scene = new QGraphicsScene(0, 0, 1920, 1080, this);
+    _scene = new QGraphicsScene(0, 0,
+                                QApplication::desktop()->screenGeometry().width(),
+                                QApplication::desktop()->screenGeometry().height(),
+                                this);
+
+    _scene->setStickyFocus(true);
     _mainLayout = new QVBoxLayout;
 
     _view = new QGraphicsView(this);
@@ -83,6 +91,7 @@ void Widget::onConnected()
     _buttonConnect->hide();
 //    showFullScreen();
     showMaximized();
+    QApplication::setOverrideCursor(Qt::BlankCursor);
     setViewCenter();
     _mainLayout->setMargin(0);
 }
