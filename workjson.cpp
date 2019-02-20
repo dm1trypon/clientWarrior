@@ -163,6 +163,16 @@ QString WorkJson::getNickname()
     return _nickname;
 }
 
+void WorkJson::setView(QGraphicsView *view)
+{
+    _view = view;
+}
+
+QGraphicsView* WorkJson::getView()
+{
+    return _view;
+}
+
 QString WorkJson::toJsonVerify(const QString &method)
 {
     QJsonObject dataJsonObj;

@@ -10,6 +10,7 @@ Widget::Widget(QWidget *parent) :
     ui->setupUi(this);
     createElements();
     connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
+    setAttribute(Qt::WA_KeyCompression);
 }
 
 Widget::~Widget()
@@ -27,6 +28,8 @@ void Widget::createElements()
     _view->hide();
     _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    WorkJson::Instance().setView(_view);
 
     _labelNickname = new QLabel("Nickname:");
     _labelHost = new QLabel("Host:");

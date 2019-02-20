@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QGraphicsScene>
+#include <QGraphicsView>
 #include <QMap>
 
 class WorkJson : public QObject
@@ -25,6 +26,7 @@ private:
     QMap <QString, qreal> _viewCenter;
     QMap <QString, qreal> _sizePlayer;
     QGraphicsScene *_scene;
+    QGraphicsView *_view;
     Camera _camera;
 
     bool checkFields(const QJsonObject dataJsonObj);
@@ -42,6 +44,8 @@ public:
     void setScene(QGraphicsScene *scene);
     void setViewCenter(const QMap<QString, qreal> viewCenter);
     void setSizePlayer(const QMap<QString, qreal> sizePlayer);
+    void setView(QGraphicsView *view);
+    QGraphicsView *getView();
 signals:
     void signalSend(QString);
     void signalConnected();

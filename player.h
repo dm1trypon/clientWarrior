@@ -1,6 +1,8 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+#include "control.h"
+
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
@@ -14,12 +16,8 @@ public:
 
 private:
     const QString PATH_TO_PLAYER_IMG = ":/img/player.png";
-    const QString LEFT = "left";
-    const QString RIGHT = "right";
-    const QString UP = "up";
-    const QString DOWN = "down";
 
-    void onHold(QKeyEvent *event, const bool hold);
+    Control _control;
 
 protected:
     void keyPressEvent(QKeyEvent *event);

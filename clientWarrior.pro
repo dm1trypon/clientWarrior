@@ -31,7 +31,8 @@ SOURCES += \
     workjson.cpp \
     player.cpp \
     camera.cpp \
-    scene.cpp
+    scene.cpp \
+    control.cpp
 
 HEADERS += \
         widget.h \
@@ -39,7 +40,8 @@ HEADERS += \
     workjson.h \
     player.h \
     camera.h \
-    scene.h
+    scene.h \
+    control.h
 
 FORMS += \
         widget.ui
