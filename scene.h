@@ -4,8 +4,9 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <QGraphicsRectItem>
 
-class Scene : public QObject, public QGraphicsPixmapItem
+class Scene : public QObject, public QGraphicsRectItem
 {
     Q_OBJECT
 public:
