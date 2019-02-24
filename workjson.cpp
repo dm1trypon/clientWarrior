@@ -31,7 +31,7 @@ void WorkJson::fromJson(const QString &data)
 
     if (method == "disconnection")
     {
-        QString nickname = dataJsonObj.value("nickname").toString();
+        const QString nickname = dataJsonObj.value("nickname").toString();
 
         if (!_players.contains(nickname))
         {
@@ -43,6 +43,22 @@ void WorkJson::fromJson(const QString &data)
         _players.remove(nickname);
     }
 
+    if (method == "remove")
+    {
+        const int id = dataJsonObj.value("id_bullet").toInt();
+
+        if (!_bullets.contains(id))
+        {
+            qWarning() << "Warning! Bullet is not exist for delete from game scene!";
+            return;
+        }
+
+        _bullets[id]->deleteLater();
+        _bullets.remove(id);
+
+        qDebug() << _bullets.keys() << id;
+    }
+
     if (method == "objects")
     {
         if (!checkFields(dataJsonObj))
@@ -52,6 +68,7 @@ void WorkJson::fromJson(const QString &data)
 
         toScene(dataJsonObj);
         toPlayers(dataJsonObj);
+        toBullets(dataJsonObj);
     }
 }
 
@@ -98,12 +115,12 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
 
     if (!_gameScene.contains("scene"))
     {
-        Scene *gameScene = new Scene(_camera.setPositionObjects(position, _sizePlayer), size);
+        Scene *gameScene = new Scene(_camera.setPositionObjects(position), size);
         _scene->addItem(gameScene);
         _gameScene.insert("scene", gameScene);
     }
 
-    _gameScene["scene"]->setPosition(_camera.setPositionObjects(position, _sizePlayer));
+    _gameScene["scene"]->setPosition(_camera.setPositionObjects(position));
 }
 
 void WorkJson::toPlayers(const QJsonObject dataJsonObj)
@@ -112,29 +129,58 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
 
     foreach (QJsonValue playerValue, playersJsonArr)
     {
-        QString nickname = playerValue.toObject().value("nickname").toString();
+        const QString nickname = playerValue.toObject().value("nickname").toString();
 
         QMap <QString, qreal> position;
         position.insert("x", playerValue.toObject().value("pos_x").toInt());
         position.insert("y", playerValue.toObject().value("pos_y").toInt());
 
+        QMap <QString, qreal> size;
+        size.insert("width", playerValue.toObject().value("width").toInt());
+        size.insert("height", playerValue.toObject().value("height").toInt());
+
         if (nickname == _nickname)
         {
+            _camera.setSizePlayer(size);
             _camera.setOffsetFactor(position, _viewCenter);
         }
 
         if (!_players.contains(nickname))
         {
-            QMap <QString, qreal> size;
-            size.insert("width", playerValue.toObject().value("width").toInt());
-            size.insert("height", playerValue.toObject().value("height").toInt());
-
-            Player *player = new Player(nickname, _camera.setPositionObjects(position, _sizePlayer), size);
+            Player *player = new Player(nickname, _camera.setPositionObjects(position), size);
             _scene->addItem(player);
-            _players.insert(playerValue.toObject().value("nickname").toString(), player);
+            _players.insert(nickname, player);
         }
 
-        _players[playerValue.toObject().value("nickname").toString()]->setPosition(_camera.setPositionObjects(position, _sizePlayer));
+        _players[playerValue.toObject().value("nickname").toString()]->setPosition(_camera.setPositionObjects(position));
+    }
+}
+
+void WorkJson::toBullets(const QJsonObject dataJsonObj)
+{
+    QJsonArray bulletsJsonArr = dataJsonObj.value("bullets").toArray();
+
+    foreach (QJsonValue bulletValue, bulletsJsonArr)
+    {
+        const QString nickname = bulletValue.toObject().value("nickname").toString();
+        const int id = bulletValue.toObject().value("id_bullet").toInt();
+
+        QMap <QString, qreal> position;
+        position.insert("x", bulletValue.toObject().value("pos_x").toDouble());
+        position.insert("y", bulletValue.toObject().value("pos_y").toDouble());
+
+        if (!_bullets.contains(id))
+        {
+            QMap <QString, qreal> size;
+            size.insert("width", bulletValue.toObject().value("width").toInt());
+            size.insert("height", bulletValue.toObject().value("height").toInt());
+
+            Bullet *bullet = new Bullet(nickname, id, _camera.setPositionObjects(position), size);
+            _scene->addItem(bullet);
+            _bullets.insert(id, bullet);
+        }
+
+        _bullets[id]->setPosition(_camera.setPositionObjects(position));
     }
 }
 
@@ -178,8 +224,10 @@ QString WorkJson::toJsonVerify(const QString &method)
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", method);
     dataJsonObj.insert("nickname", _nickname);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
+    const QJsonDocument dataJsonDoc(dataJsonObj);
+    const QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
     return data;
 }
 
@@ -190,7 +238,24 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
     dataJsonObj.insert("nickname", _nickname);
     dataJsonObj.insert("key", key);
     dataJsonObj.insert("hold", hold);
-    QJsonDocument dataJsonDoc(dataJsonObj);
-    QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
+
+    const QJsonDocument dataJsonDoc(dataJsonObj);
+    const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
+
+    emit signalSend(data);
+}
+
+void WorkJson::toJsonClick(const QMap <QString, qreal> click)
+{
+    QMap <QString, qreal> newClick = _camera.setClick(click, _gameScene["scene"]->getPosition());
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "shot");
+    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("x", newClick["x"]);
+    dataJsonObj.insert("y", newClick["y"]);
+
+    const QJsonDocument dataJsonDoc(dataJsonObj);
+    const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
+
     emit signalSend(data);
 }

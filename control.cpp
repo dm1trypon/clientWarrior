@@ -13,16 +13,16 @@ void Control::onHold(QKeyEvent *event, const bool hold)
     QString key;
 
     switch (event->key()) {
-    case Qt::Key_Left:
+    case Qt::Key_A:
         key = "left";
         break;
-    case Qt::Key_Right:
+    case Qt::Key_D:
         key = "right";
         break;
-    case Qt::Key_Up:
+    case Qt::Key_W:
         key = "up";
         break;
-    case Qt::Key_Down:
+    case Qt::Key_S:
         key = "down";
         break;
     default:

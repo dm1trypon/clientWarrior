@@ -11,8 +11,8 @@ class Player : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Player(const QString &_nickname, const QMap<QString, qreal> position, const QMap <QString, qreal> size);
-    void setPosition(const QMap<QString, qreal> position);
+    Player(const QString &_nickname, const QMap <QString, qreal> position, const QMap <QString, qreal> size);
+    void setPosition(const QMap <QString, qreal> position);
 
 private:
     const QString PATH_TO_PLAYER_IMG = ":/img/player.png";

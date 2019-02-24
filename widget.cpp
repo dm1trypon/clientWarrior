@@ -91,7 +91,7 @@ void Widget::onConnected()
     _buttonConnect->hide();
 //    showFullScreen();
     showMaximized();
-    QApplication::setOverrideCursor(Qt::BlankCursor);
+//    QApplication::setOverrideCursor(Qt::BlankCursor);
     setViewCenter();
     _mainLayout->setMargin(0);
 }
