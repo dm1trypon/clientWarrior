@@ -88,7 +88,7 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-    showMaximized();
+    showFullScreen();
     setViewCenter();
     _mainLayout->setMargin(0);
 }

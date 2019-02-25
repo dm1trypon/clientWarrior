@@ -106,11 +106,7 @@ void WorkJson::toLifes(const int life)
 //        return;
 //    }
 
-//    if (life < _lifes.count())
-//    {
-//        _lifes.last()->deleteLater();
-//        return;
-//    }
+
 
     QMap <QString, qreal> size;
     size.insert("width", 40);
@@ -118,7 +114,7 @@ void WorkJson::toLifes(const int life)
 
     qreal padding = 0;
 
-    while (life >= _lifes.count())
+    while (life >= _lifes.count() + 1)
     {
         qDebug() << _lifes.count();
         QMap <QString, qreal> position;
@@ -131,6 +127,14 @@ void WorkJson::toLifes(const int life)
         Life *life = new Life(position, size);
         _scene->addItem(life);
         _lifes.append(life);
+    }
+
+    if (life < _lifes.count())
+    {
+        qDebug() << _lifes.count() << life;
+        _lifes.last()->deleteLater();
+        _lifes.removeLast();
+        return;
     }
 }
 
