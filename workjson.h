@@ -2,6 +2,7 @@
 #define WORKJSON_H
 
 #include "player.h"
+#include "life.h"
 #include "bullet.h"
 #include "scene.h"
 #include "camera.h"
@@ -24,6 +25,7 @@ private:
     QString _nickname;
     QMap <QString, Player *> _players;
     QMap <int, Bullet *> _bullets;
+    QList <Life *> _lifes;
     QMap <QString, Scene *> _gameScene;
     QMap <QString, qreal> _viewCenter;
     QMap <QString, qreal> _sizePlayer;
@@ -35,6 +37,7 @@ private:
     void toScene(const QJsonObject dataJsonObj);
     void toPlayers(const QJsonObject dataJsonObj);
     void toBullets(const QJsonObject dataJsonObj);
+    void toLifes(const int life);
 public:
     WorkJson(){}
     static WorkJson& Instance();

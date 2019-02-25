@@ -99,6 +99,41 @@ bool WorkJson::checkFields(const QJsonObject dataJsonObj)
     return true;
 }
 
+void WorkJson::toLifes(const int life)
+{
+//    if (life == _lifes.count())
+//    {
+//        return;
+//    }
+
+//    if (life < _lifes.count())
+//    {
+//        _lifes.last()->deleteLater();
+//        return;
+//    }
+
+    QMap <QString, qreal> size;
+    size.insert("width", 40);
+    size.insert("height", 40);
+
+    qreal padding = 0;
+
+    while (life >= _lifes.count())
+    {
+        qDebug() << _lifes.count();
+        QMap <QString, qreal> position;
+        position.insert("x", padding + 20);
+        position.insert("y", 20);
+
+        padding = position["x"] + size["width"];
+
+        qDebug() << position << size;
+        Life *life = new Life(position, size);
+        _scene->addItem(life);
+        _lifes.append(life);
+    }
+}
+
 void WorkJson::toScene(const QJsonObject dataJsonObj)
 {
     QJsonObject sceneJsonObject = dataJsonObj.value("scene").toObject();
@@ -141,6 +176,7 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
         {
             _camera.setSizePlayer(size);
             _camera.setOffsetFactor(position, _viewCenter);
+            toLifes(playerValue.toObject().value("life").toInt());
         }
 
         if (!_players.contains(nickname))

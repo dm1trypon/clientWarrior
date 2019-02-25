@@ -33,7 +33,8 @@ SOURCES += \
     camera.cpp \
     scene.cpp \
     control.cpp \
-    bullet.cpp
+    bullet.cpp \
+    life.cpp
 
 HEADERS += \
         widget.h \
@@ -43,7 +44,8 @@ HEADERS += \
     camera.h \
     scene.h \
     control.h \
-    bullet.h
+    bullet.h \
+    life.h
 
 FORMS += \
         widget.ui
