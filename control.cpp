@@ -2,6 +2,7 @@
 #include "workjson.h"
 
 #include <QDebug>
+#include <QApplication>
 
 Control::Control()
 {
@@ -24,6 +25,9 @@ void Control::onHold(QKeyEvent *event, const bool hold)
         break;
     case Qt::Key_S:
         key = "down";
+        break;
+    case Qt::Key_Escape:
+        qApp->exit();
         break;
     default:
         break;

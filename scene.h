@@ -23,9 +23,10 @@ private:
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _cursor;
 
+    void setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent);
 protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent);
-    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent);
 private slots:
     void onPositionCursor();

@@ -55,8 +55,6 @@ void WorkJson::fromJson(const QString &data)
 
         _bullets[id]->deleteLater();
         _bullets.remove(id);
-
-        qDebug() << _bullets.keys() << id;
     }
 
     if (method == "objects")

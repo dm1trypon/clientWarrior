@@ -39,15 +39,22 @@ void Scene::onPositionCursor()
 
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    setCursorPosition(mouseEvent);
     _mouseTimer.start(100);
 }
 
 void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
 {
+    setCursorPosition(mouseEvent);
     _mouseTimer.stop();
 }
 
 void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+{
+    setCursorPosition(mouseEvent);
+}
+
+void Scene::setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent)
 {
     QMap <QString, qreal> cursor;
     cursor.insert("x", mouseEvent->scenePos().x());

@@ -13,7 +13,6 @@ Widget::Widget(QWidget *parent) :
     createElements();
     connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
     setAttribute(Qt::WA_KeyCompression);
-
 }
 
 Widget::~Widget()
@@ -89,9 +88,7 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-//    showFullScreen();
     showMaximized();
-//    QApplication::setOverrideCursor(Qt::BlankCursor);
     setViewCenter();
     _mainLayout->setMargin(0);
 }
