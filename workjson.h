@@ -38,6 +38,8 @@ private:
     void toPlayers(const QJsonObject dataJsonObj);
     void toBullets(const QJsonObject dataJsonObj);
     void toLifes(const int life);
+    void toJsonResurrection();
+
 public:
     WorkJson(){}
     static WorkJson& Instance();
@@ -53,6 +55,7 @@ public:
     void setView(QGraphicsView *view);
     QGraphicsView *getView();
     void toJsonClick(const QMap<QString, qreal> click);
+
 signals:
     void signalSend(QString);
     void signalConnected();

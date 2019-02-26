@@ -14,11 +14,20 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     QBrush brush = QBrush(image);
 
     setBrush(brush);
+    setPen(QPen(Qt::yellow));
 
     qDebug() << "Scene has been created (" << position["x"] << ":" << position["y"] << ")";
     qDebug() << "Scene size: " << size["width"] << ":" << size["height"];
 
     connect(&_mouseTimer, &QTimer::timeout, this, &Scene::onPositionCursor);
+}
+
+void Scene::addScoreBar()
+{
+    QGraphicsRectItem *scoreBar = new QGraphicsRectItem(nullptr);
+    scoreBar->setRect(0, 0, 200, 100);
+    scoreBar->setBrush(QBrush(Qt::black));
+    scoreBar->setPen(QPen(Qt::yellow));
 }
 
 void Scene::setPosition(const QMap <QString, qreal> position)

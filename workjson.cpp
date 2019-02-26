@@ -23,7 +23,7 @@ void WorkJson::fromJson(const QString &data)
     {
         QString nickname = dataJsonObj.value("nickname").toString();
 
-        if (dataJsonObj.value("nickname").toString() == nickname)
+        if (nickname == _nickname)
         {
             emit signalConnected();
         }
@@ -68,6 +68,29 @@ void WorkJson::fromJson(const QString &data)
         toPlayers(dataJsonObj);
         toBullets(dataJsonObj);
     }
+
+    if (method == "die")
+    {
+        const QString nickname = dataJsonObj.value("nickname").toString();
+
+        if (!_players.contains(nickname))
+        {
+            qWarning() << "Warning! Player is not exist for delete from game scene!";
+            return;
+        }
+
+        _players[nickname]->deleteLater();
+        _players.remove(nickname);
+
+        if (_nickname != nickname)
+        {
+            return;
+        }
+
+        toJsonResurrection();
+
+        return;
+    }
 }
 
 bool WorkJson::checkFields(const QJsonObject dataJsonObj)
@@ -101,13 +124,6 @@ bool WorkJson::checkFields(const QJsonObject dataJsonObj)
 
 void WorkJson::toLifes(const int life)
 {
-//    if (life == _lifes.count())
-//    {
-//        return;
-//    }
-
-
-
     QMap <QString, qreal> size;
     size.insert("width", 40);
     size.insert("height", 40);
@@ -116,14 +132,12 @@ void WorkJson::toLifes(const int life)
 
     while (life >= _lifes.count() + 1)
     {
-        qDebug() << _lifes.count();
         QMap <QString, qreal> position;
         position.insert("x", padding + 20);
         position.insert("y", 20);
 
         padding = position["x"] + size["width"];
 
-        qDebug() << position << size;
         Life *life = new Life(position, size);
         _scene->addItem(life);
         _lifes.append(life);
@@ -131,7 +145,6 @@ void WorkJson::toLifes(const int life)
 
     if (life < _lifes.count())
     {
-        qDebug() << _lifes.count() << life;
         _lifes.last()->deleteLater();
         _lifes.removeLast();
         return;
@@ -291,6 +304,18 @@ void WorkJson::toJsonClick(const QMap <QString, qreal> click)
     dataJsonObj.insert("nickname", _nickname);
     dataJsonObj.insert("x", newClick["x"]);
     dataJsonObj.insert("y", newClick["y"]);
+
+    const QJsonDocument dataJsonDoc(dataJsonObj);
+    const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
+
+    emit signalSend(data);
+}
+
+void WorkJson::toJsonResurrection()
+{
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "resurrection");
+    dataJsonObj.insert("nickname", _nickname);
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);

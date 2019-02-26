@@ -24,6 +24,8 @@ private:
     QMap <QString, qreal> _cursor;
 
     void setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent);
+    void addScoreBar();
+
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *);

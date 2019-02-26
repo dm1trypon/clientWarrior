@@ -44,7 +44,9 @@ void Widget::createElements()
 
     _lineEditNickname = new QLineEdit();
     _lineEditHost = new QLineEdit();
+    _lineEditHost->setText("127.0.0.1");
     _lineEditPort = new QLineEdit();
+    _lineEditPort->setText("44444");
 
     _buttonConnect = new QPushButton("Connect");
     connect(_buttonConnect, &QPushButton::clicked, this, &Widget::connectToServer);
@@ -88,7 +90,8 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-    showFullScreen();
+//    showFullScreen();
+    showMaximized();
     setViewCenter();
     _mainLayout->setMargin(0);
 }
