@@ -54,7 +54,7 @@ public:
     void setSizePlayer(const QMap<QString, qreal> sizePlayer);
     void setView(QGraphicsView *view);
     QGraphicsView *getView();
-    void toJsonClick(const QMap<QString, qreal> click);
+    void toJsonShot(const QMap<QString, qreal> click);
 
 signals:
     void signalSend(QString);

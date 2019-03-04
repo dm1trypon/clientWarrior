@@ -132,6 +132,9 @@ void WorkJson::toLifes(const int life)
 
     while (life >= _lifes.count() + 1)
     {
+        qDebug() << life;
+        qDebug() << _lifes.count();
+
         QMap <QString, qreal> position;
         position.insert("x", padding + 20);
         position.insert("y", 20);
@@ -148,6 +151,11 @@ void WorkJson::toLifes(const int life)
         _lifes.last()->deleteLater();
         _lifes.removeLast();
         return;
+    }
+
+    if (life == 0)
+    {
+        _lifes.clear();
     }
 }
 
@@ -296,14 +304,19 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
     emit signalSend(data);
 }
 
-void WorkJson::toJsonClick(const QMap <QString, qreal> click)
-{
-    QMap <QString, qreal> newClick = _camera.setClick(click, _gameScene["scene"]->getPosition());
+void WorkJson::toJsonShot(const QMap <QString, qreal> shot)
+{ 
+    if (!_players.contains(_nickname))
+    {
+        return;
+    }
+
+    const QMap <QString, qreal> newShot = _camera.setShot(shot);
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "shot");
     dataJsonObj.insert("nickname", _nickname);
-    dataJsonObj.insert("x", newClick["x"]);
-    dataJsonObj.insert("y", newClick["y"]);
+    dataJsonObj.insert("x", newShot["x"]);
+    dataJsonObj.insert("y", newShot["y"]);
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);

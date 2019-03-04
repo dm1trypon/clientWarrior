@@ -18,7 +18,7 @@ void Camera::setOffsetFactor(const QMap <QString, qreal> position, const QMap <Q
     _factor.insert("yFactor", position["y"] - viewCenter["y"]);
 }
 
-void Camera::setSizePlayer(const QMap<QString, qreal> sizePlayer)
+void Camera::setSizePlayer(const QMap <QString, qreal> sizePlayer)
 {
     _sizePlayer = sizePlayer;
 }
@@ -32,10 +32,10 @@ QMap <QString, qreal> Camera::setPositionObjects(const QMap <QString, qreal> pos
     return newPosition;
 }
 
-QMap <QString, qreal> Camera::setClick(const QMap <QString, qreal> click, const QMap <QString, qreal> positionScene)
+QMap <QString, qreal> Camera::setShot(const QMap <QString, qreal> shot)
 {
-    QMap <QString, qreal> newClick;
-    newClick.insert("x", click["x"] + _factor["xFactor"] + _sizePlayer["width"] / 2);
-    newClick.insert("y", click["y"] + _factor["yFactor"] + _sizePlayer["height"] / 2);
-    return newClick;
+    QMap <QString, qreal> newShot;
+    newShot.insert("x", shot["x"] + _factor["xFactor"] + _sizePlayer["width"] / 2);
+    newShot.insert("y", shot["y"] + _factor["yFactor"] + _sizePlayer["height"] / 2);
+    return newShot;
 }

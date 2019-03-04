@@ -43,7 +43,7 @@ QMap <QString, qreal> Scene::getPosition()
 
 void Scene::onPositionCursor()
 {
-    WorkJson::Instance().toJsonClick(_cursor);
+    WorkJson::Instance().toJsonShot(_cursor);
 }
 
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
