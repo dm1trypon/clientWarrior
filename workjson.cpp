@@ -14,6 +14,8 @@ void WorkJson::fromJson(const QString &data)
     QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
     QString method = dataJsonObj.value("method").toString();
 
+    qDebug().noquote() << data;
+
     if (method == "verify")
     {
         emit signalSend(toJsonVerify(method));
@@ -175,6 +177,13 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
     {
         Scene *gameScene = new Scene(_camera.setPositionObjects(position), size);
         _scene->addItem(gameScene);
+
+        QMap <QString, qreal> positionBar;
+        positionBar.insert("x", _view->width() - 200);
+        positionBar.insert("y", _view->height());
+
+        _scene->addItem(gameScene->addScoreBar(positionBar));
+
         _gameScene.insert("scene", gameScene);
     }
 
@@ -251,6 +260,11 @@ void WorkJson::setScene(QGraphicsScene *scene)
 void WorkJson::setViewCenter(const QMap <QString, qreal> viewCenter)
 {
     _viewCenter = viewCenter;
+
+    if (_gameScene["scene"]->getScoreBar())
+    {
+        _gameScene["scene"]->getScoreBar()->setPos(_view->width() - 200, _view->height()); /////error
+    }
 }
 
 void WorkJson::setSizePlayer(const QMap <QString, qreal> sizePlayer)

@@ -22,14 +22,6 @@ Widget::~Widget()
 
 void Widget::createElements()
 {
-    _scene = new QGraphicsScene(0, 0,
-                                QApplication::desktop()->screenGeometry().width(),
-                                QApplication::desktop()->screenGeometry().height(),
-                                this);
-
-    _scene->setStickyFocus(true);
-    _mainLayout = new QVBoxLayout;
-
     _view = new QGraphicsView(this);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
@@ -37,6 +29,8 @@ void Widget::createElements()
     _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     WorkJson::Instance().setView(_view);
+
+    _mainLayout = new QVBoxLayout;
 
     _labelNickname = new QLabel("Nickname:");
     _labelHost = new QLabel("Host:");
@@ -51,18 +45,20 @@ void Widget::createElements()
     _buttonConnect = new QPushButton("Connect");
     connect(_buttonConnect, &QPushButton::clicked, this, &Widget::connectToServer);
 
+    _buttonTypeWindow = new QPushButton("Fullscreen");
+    connect(_buttonTypeWindow, &QPushButton::clicked, this, &Widget::typeWindow);
+
     _mainLayout->addWidget(_labelNickname);
     _mainLayout->addWidget(_lineEditNickname);
     _mainLayout->addWidget(_labelHost);
     _mainLayout->addWidget(_lineEditHost);
     _mainLayout->addWidget(_labelPort);
     _mainLayout->addWidget(_lineEditPort);
+    _mainLayout->addWidget(_buttonTypeWindow);
     _mainLayout->addWidget(_buttonConnect);
     _mainLayout->addWidget(_view);
 
-    _view->setScene(_scene);
     setLayout(_mainLayout);
-    WorkJson::Instance().setScene(_scene);
 }
 
 void Widget::resizeEvent(QResizeEvent *)
@@ -82,7 +78,15 @@ void Widget::setViewCenter()
 
 void Widget::onConnected()
 {
+    createScene();
+
+    _scene->setStickyFocus(true);
+    _view->setScene(_scene);
+
+    WorkJson::Instance().setScene(_scene);
+
     _view->show();
+    _view->setSceneRect(_scene->sceneRect());
     _labelNickname->hide();
     _labelHost->hide();
     _labelPort->hide();
@@ -90,10 +94,46 @@ void Widget::onConnected()
     _lineEditNickname->hide();
     _lineEditPort->hide();
     _buttonConnect->hide();
-//    showFullScreen();
-    showMaximized();
+    _buttonTypeWindow->hide();
     setViewCenter();
     _mainLayout->setMargin(0);
+}
+
+void Widget::createScene()
+{
+    qreal paddingTop = frameGeometry().height() - geometry().height();
+
+    if (_fullscreen)
+    {
+        showFullScreen();
+
+        _scene = new QGraphicsScene(0, 0,
+                                    QApplication::desktop()->screenGeometry().width(),
+                                    QApplication::desktop()->screenGeometry().height(),
+                                    this);
+
+        return;
+    }
+
+    showMaximized();
+    _scene = new QGraphicsScene(0, 0,
+                                QApplication::desktop()->screenGeometry().width(),
+                                QApplication::desktop()->screenGeometry().height() - paddingTop,
+                                this);
+}
+
+void Widget::typeWindow()
+{
+    if (_fullscreen)
+    {
+        _fullscreen = false;
+        _buttonTypeWindow->setText("Fullscreen");
+
+        return;
+    }
+
+    _fullscreen = true;
+    _buttonTypeWindow->setText("Window");
 }
 
 void Widget::connectToServer()

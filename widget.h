@@ -24,6 +24,7 @@ public:
 private slots:
     void connectToServer();
     void onConnected();
+    void typeWindow();
 
 private:
     Ui::Widget *ui;
@@ -31,6 +32,7 @@ private:
     QGraphicsView *_view;
     QVBoxLayout *_mainLayout;
     QPushButton *_buttonConnect;
+    QPushButton *_buttonTypeWindow;
     QLineEdit *_lineEditNickname;
     QLineEdit *_lineEditHost;
     QLineEdit *_lineEditPort;
@@ -40,10 +42,12 @@ private:
     QString _host;
     QString _port;
     QString _nickname;
+    bool _fullscreen = false;
 
     void createElements();
 
     void setViewCenter();
+    void createScene();
 protected:
     void resizeEvent(QResizeEvent *);
 };
