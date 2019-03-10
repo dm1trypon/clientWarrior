@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QLineEdit>
+#include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
@@ -26,6 +27,7 @@ private slots:
     void onConnected();
     void typeWindow();
 
+    void setResolution(const int id);
 private:
     Ui::Widget *ui;
     QGraphicsScene *_scene;
@@ -36,20 +38,20 @@ private:
     QLineEdit *_lineEditNickname;
     QLineEdit *_lineEditHost;
     QLineEdit *_lineEditPort;
+    QComboBox *_listFall;
     QLabel *_labelNickname;
     QLabel *_labelHost;
     QLabel *_labelPort;
+    QLabel *_labelResolution;
     QString _host;
     QString _port;
     QString _nickname;
+    QMap <QString, qreal> _resolution;
     bool _fullscreen = false;
 
     void createElements();
 
-    void setViewCenter();
     void createScene();
-protected:
-    void resizeEvent(QResizeEvent *);
 };
 
 #endif // WIDGET_H

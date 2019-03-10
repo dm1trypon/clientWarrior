@@ -22,26 +22,6 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     connect(&_mouseTimer, &QTimer::timeout, this, &Scene::onPositionCursor);
 }
 
-QGraphicsRectItem * Scene::addScoreBar(const QMap <QString, qreal> position)
-{
-    qDebug() << position;
-    _scoreBar = new QGraphicsRectItem(nullptr);
-    _scoreBar->setRect(position["x"], position["y"], 200, 100);
-    _scoreBar->setBrush(QBrush(Qt::black));
-    _scoreBar->setPen(QPen(Qt::yellow));
-    return _scoreBar;
-}
-
-void Scene::setPositionScoreBar(const QMap <QString, qreal> position)
-{
-    _scoreBar->setPos(position["x"], position["y"]);
-}
-
-QGraphicsRectItem * Scene::getScoreBar()
-{
-    return _scoreBar;
-}
-
 void Scene::setPosition(const QMap <QString, qreal> position)
 {
     _position = position;

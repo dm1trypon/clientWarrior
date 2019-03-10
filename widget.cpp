@@ -20,13 +20,29 @@ Widget::~Widget()
     delete ui;
 }
 
+void Widget::setResolution(const int id)
+{
+    if (!_resolution.isEmpty())
+    {
+        _resolution.clear();
+    }
+
+    QString value = _listFall->itemData(id).toString();
+    QStringList resolution = value.split( ":" );
+    _resolution.insert("width", resolution[0].toInt() - 2);
+    _resolution.insert("height", resolution[1].toInt() - 2);
+
+    WorkJson::Instance().setResolution(_resolution);
+    qDebug() << "resolution:" << _resolution;
+}
+
 void Widget::createElements()
 {
     _view = new QGraphicsView(this);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
-    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    _view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    _view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     WorkJson::Instance().setView(_view);
 
@@ -35,6 +51,20 @@ void Widget::createElements()
     _labelNickname = new QLabel("Nickname:");
     _labelHost = new QLabel("Host:");
     _labelPort = new QLabel("Port:");
+    _labelResolution = new QLabel("Resolution:");
+
+    _listFall = new QComboBox();
+
+    _listFall->addItem("640 x 480", QVariant("640:480"));
+    _listFall->addItem("800 x 600", QVariant("800:600"));
+    _listFall->addItem("1024 x 600", QVariant("1024:600"));
+    _listFall->addItem("1024 x 768", QVariant("1024:768"));
+    _listFall->addItem("1280 x 720", QVariant("1280:720"));
+    _listFall->addItem("1280 x 1024", QVariant("1280:1024"));
+    _listFall->addItem("1600 x 900", QVariant("1600:900"));
+    _listFall->addItem("1920 x 1080", QVariant("1920:1080"));
+
+    connect(_listFall, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Widget::setResolution);
 
     _lineEditNickname = new QLineEdit();
     _lineEditHost = new QLineEdit();
@@ -54,6 +84,8 @@ void Widget::createElements()
     _mainLayout->addWidget(_lineEditHost);
     _mainLayout->addWidget(_labelPort);
     _mainLayout->addWidget(_lineEditPort);
+    _mainLayout->addWidget(_labelResolution);
+    _mainLayout->addWidget(_listFall);
     _mainLayout->addWidget(_buttonTypeWindow);
     _mainLayout->addWidget(_buttonConnect);
     _mainLayout->addWidget(_view);
@@ -61,24 +93,14 @@ void Widget::createElements()
     setLayout(_mainLayout);
 }
 
-void Widget::resizeEvent(QResizeEvent *)
-{
-    qDebug() << "Widht:" << _view->width() << "Height:" << _view->height();
-    setViewCenter();
-}
-
-void Widget::setViewCenter()
-{
-    QMap <QString, qreal> viewCenter;
-    viewCenter.insert("x", _view->width() / 2);
-    viewCenter.insert("y", _view->height() / 2);
-
-    WorkJson::Instance().setViewCenter(viewCenter);
-}
-
 void Widget::onConnected()
 {
+    setFixedSize(static_cast<int>(_resolution["width"]), static_cast<int>(_resolution["height"]));
     createScene();
+    QMap <QString, qreal> sceneCenter;
+    sceneCenter.insert("x", _scene->width() / 2);
+    sceneCenter.insert("y", _scene->height() / 2);
+    WorkJson::Instance().setViewCenter(sceneCenter);
 
     _scene->setStickyFocus(true);
     _view->setScene(_scene);
@@ -93,10 +115,13 @@ void Widget::onConnected()
     _lineEditHost->hide();
     _lineEditNickname->hide();
     _lineEditPort->hide();
+    _labelResolution->hide();
+    _listFall->hide();
     _buttonConnect->hide();
     _buttonTypeWindow->hide();
-    setViewCenter();
     _mainLayout->setMargin(0);
+    qDebug() << "VIEW:" << _view->size()
+             << "SCENE:" << _scene->width() << _scene->height();
 }
 
 void Widget::createScene()
@@ -108,17 +133,20 @@ void Widget::createScene()
         showFullScreen();
 
         _scene = new QGraphicsScene(0, 0,
-                                    QApplication::desktop()->screenGeometry().width(),
-                                    QApplication::desktop()->screenGeometry().height(),
+                                    _resolution["width"],
+                                    _resolution["height"],
                                     this);
 
+        WorkJson::Instance().setPositionScoreBar();
         return;
     }
 
     showMaximized();
+    _resolution["height"] = _resolution["height"] - paddingTop;
+    WorkJson::Instance().setPositionScoreBar();
     _scene = new QGraphicsScene(0, 0,
-                                QApplication::desktop()->screenGeometry().width(),
-                                QApplication::desktop()->screenGeometry().height() - paddingTop,
+                                _resolution["width"],
+                                _resolution["height"],
                                 this);
 }
 

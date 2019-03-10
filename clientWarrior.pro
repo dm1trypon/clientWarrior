@@ -34,7 +34,7 @@ SOURCES += \
     scene.cpp \
     control.cpp \
     bullet.cpp \
-    life.cpp
+    hud.cpp
 
 HEADERS += \
         widget.h \
@@ -45,7 +45,8 @@ HEADERS += \
     scene.h \
     control.h \
     bullet.h \
-    life.h
+    life.h \
+    hud.h
 
 FORMS += \
         widget.ui

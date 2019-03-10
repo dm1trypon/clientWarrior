@@ -14,8 +14,6 @@ void WorkJson::fromJson(const QString &data)
     QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
     QString method = dataJsonObj.value("method").toString();
 
-    qDebug().noquote() << data;
-
     if (method == "verify")
     {
         emit signalSend(toJsonVerify(method));
@@ -124,41 +122,32 @@ bool WorkJson::checkFields(const QJsonObject dataJsonObj)
     return true;
 }
 
-void WorkJson::toLifes(const int life)
+void WorkJson::toHealth(const int health)
 {
-    QMap <QString, qreal> size;
-    size.insert("width", 40);
-    size.insert("height", 40);
-
-    qreal padding = 0;
-
-    while (life >= _lifes.count() + 1)
+    if (_healthHud)
     {
-        qDebug() << life;
-        qDebug() << _lifes.count();
-
-        QMap <QString, qreal> position;
-        position.insert("x", padding + 20);
-        position.insert("y", 20);
-
-        padding = position["x"] + size["width"];
-
-        Life *life = new Life(position, size);
-        _scene->addItem(life);
-        _lifes.append(life);
-    }
-
-    if (life < _lifes.count())
-    {
-        _lifes.last()->deleteLater();
-        _lifes.removeLast();
         return;
     }
 
-    if (life == 0)
+    _bar->addHealth(health);
+    _healthHud = _bar->getHealth();
+    qDebug() << _healthHud->x() << _healthHud->y();
+}
+
+void WorkJson::toScore(const int score)
+{
+    if (_scoreBar)
     {
-        _lifes.clear();
+        _scoreBar->setPlainText(QString::number(score));
+
+        return;
     }
+
+    QMap <QString, qreal> positionScore;
+    positionScore.insert("x", _view->width() - 400);
+    positionScore.insert("y", 0);
+
+    _scoreBar = _bar->addScore(score, positionScore);
 }
 
 void WorkJson::toScene(const QJsonObject dataJsonObj)
@@ -179,10 +168,13 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
         _scene->addItem(gameScene);
 
         QMap <QString, qreal> positionBar;
-        positionBar.insert("x", _view->width() - 200);
-        positionBar.insert("y", _view->height());
+        positionBar.insert("x", 0);
+        positionBar.insert("y", 0);
 
-        _scene->addItem(gameScene->addScoreBar(positionBar));
+        _bar = new HUD(positionBar, _resolution);
+
+        QGraphicsPixmapItem *bar = _bar;
+        _scene->addItem(bar);
 
         _gameScene.insert("scene", gameScene);
     }
@@ -198,6 +190,7 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
     {
         const QString nickname = playerValue.toObject().value("nickname").toString();
 
+
         QMap <QString, qreal> position;
         position.insert("x", playerValue.toObject().value("pos_x").toInt());
         position.insert("y", playerValue.toObject().value("pos_y").toInt());
@@ -208,9 +201,12 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
 
         if (nickname == _nickname)
         {
+            const int score = playerValue.toObject().value("score").toInt();
+
             _camera.setSizePlayer(size);
             _camera.setOffsetFactor(position, _viewCenter);
-            toLifes(playerValue.toObject().value("life").toInt());
+            toHealth(playerValue.toObject().value("life").toInt());
+            toScore(score);
         }
 
         if (!_players.contains(nickname))
@@ -252,19 +248,30 @@ void WorkJson::toBullets(const QJsonObject dataJsonObj)
     }
 }
 
+void WorkJson::setResolution(const QMap <QString, qreal> resolution)
+{
+    _resolution = resolution;
+}
+
 void WorkJson::setScene(QGraphicsScene *scene)
 {
     _scene = scene;
 }
 
+void WorkJson::setPositionScoreBar()
+{
+    if (_gameScene.isEmpty())
+    {
+        return;
+    }
+    _scoreBar->setPos(_view->width() - 100, -15);
+//    _bar->setRect(0, 0, _view->width(), 70);
+}
+
 void WorkJson::setViewCenter(const QMap <QString, qreal> viewCenter)
 {
     _viewCenter = viewCenter;
-
-    if (_gameScene["scene"]->getScoreBar())
-    {
-        _gameScene["scene"]->getScoreBar()->setPos(_view->width() - 200, _view->height()); /////error
-    }
+    qDebug() << "_viewCenter:" << _viewCenter;
 }
 
 void WorkJson::setSizePlayer(const QMap <QString, qreal> sizePlayer)
