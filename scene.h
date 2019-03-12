@@ -17,12 +17,14 @@ public:
     QMap <QString, qreal> getPosition();
     QTimer _mouseTimer;
 
+    QGraphicsRectItem *getBorder();
+    void addBorder(const QMap<QString, qreal> position, const QMap<QString, qreal> size);
 private:
     const QString PATH_TO_SCENE_IMG = ":/img/scene.jpg";
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _cursor;
-    QGraphicsRectItem * _scoreBar;
+    QGraphicsRectItem *_border;
 
     void setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent);
 

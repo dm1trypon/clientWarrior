@@ -14,7 +14,6 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     QBrush brush = QBrush(image);
 
     setBrush(brush);
-    setPen(QPen(Qt::yellow));
 
     qDebug() << "Scene has been created (" << position["x"] << ":" << position["y"] << ")";
     qDebug() << "Scene size: " << size["width"] << ":" << size["height"];
@@ -22,9 +21,29 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     connect(&_mouseTimer, &QTimer::timeout, this, &Scene::onPositionCursor);
 }
 
+void Scene::addBorder(const QMap <QString, qreal> position, const QMap <QString, qreal> size)
+{
+    _border = new QGraphicsRectItem();
+    _border->setRect(position["x"], position["y"], size["width"], size["height"]);
+    _border->setZValue(8);
+
+    QPen pen;
+    pen.setWidth(50);
+    pen.setColor(QColor(25, 25, 112));
+
+    _border->setPen(pen);
+}
+
+QGraphicsRectItem * Scene::getBorder()
+{
+    return _border;
+}
+
 void Scene::setPosition(const QMap <QString, qreal> position)
 {
     _position = position;
+
+    _border->setPos(position["x"], position["y"]);
     setPos(position["x"], position["y"]);
 }
 
@@ -63,4 +82,3 @@ void Scene::setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent)
 
     _cursor = cursor;
 }
-

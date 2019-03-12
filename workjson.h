@@ -45,6 +45,7 @@ private:
     void toJsonResurrection();
 
     void toScore(const int score);
+    QMap <QString, qreal> setPositionHealth(QMap<QString, qreal> itemHUD);
 public:
     WorkJson(){}
     static WorkJson& Instance();
@@ -60,8 +61,6 @@ public:
     void setView(QGraphicsView *view);
     QGraphicsView *getView();
     void toJsonShot(const QMap<QString, qreal> click);
-
-    void setPositionScoreBar();
     void setResolution(const QMap<QString, qreal> resolution);
 signals:
     void signalSend(QString);

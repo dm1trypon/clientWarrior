@@ -126,12 +126,27 @@ void WorkJson::toHealth(const int health)
 {
     if (_healthHud)
     {
+        _healthHud->setPlainText(QString::number(health));
+
         return;
     }
 
-    _bar->addHealth(health);
+    QMap <QString, qreal> itemHUD;
+    itemHUD.insert("x", 170);
+    itemHUD.insert("y", 62);
+    itemHUD.insert("size", 30);
+
+    _bar->addHealth(health, setPositionHealth(itemHUD));
     _healthHud = _bar->getHealth();
-    qDebug() << _healthHud->x() << _healthHud->y();
+}
+
+QMap <QString, qreal> WorkJson::setPositionHealth(QMap <QString, qreal> itemHUD)
+{
+    itemHUD["x"] = _scene->width() * itemHUD["x"] / 1920;
+    itemHUD["y"] = _scene->height() - _scene->height() * itemHUD["y"] / 1080;
+    itemHUD["size"] = _scene->width() * itemHUD["size"] / 1920;
+
+    return itemHUD;
 }
 
 void WorkJson::toScore(const int score)
@@ -143,11 +158,13 @@ void WorkJson::toScore(const int score)
         return;
     }
 
-    QMap <QString, qreal> positionScore;
-    positionScore.insert("x", _view->width() - 400);
-    positionScore.insert("y", 0);
+    QMap <QString, qreal> itemHUD;
+    itemHUD.insert("x", 1750);
+    itemHUD.insert("y", 62);
+    itemHUD.insert("size", 30);
 
-    _scoreBar = _bar->addScore(score, positionScore);
+    _bar->addScore(score, setPositionHealth(itemHUD));
+    _scoreBar = _bar->getScore();
 }
 
 void WorkJson::toScene(const QJsonObject dataJsonObj)
@@ -165,13 +182,19 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
     if (!_gameScene.contains("scene"))
     {
         Scene *gameScene = new Scene(_camera.setPositionObjects(position), size);
+        gameScene->addBorder(_camera.setPositionObjects(position), size);
         _scene->addItem(gameScene);
+        _scene->addItem(gameScene->getBorder());
 
-        QMap <QString, qreal> positionBar;
-        positionBar.insert("x", 0);
-        positionBar.insert("y", 0);
+        QMap <QString, qreal> positionHUD;
+        positionHUD.insert("x", 0);
+        positionHUD.insert("y", 0);
 
-        _bar = new HUD(positionBar, _resolution);
+        QMap <QString, qreal> sizeHUD;
+        sizeHUD.insert("width", _scene->width());
+        sizeHUD.insert("height", _scene->height());
+
+        _bar = new HUD(positionHUD, sizeHUD);
 
         QGraphicsPixmapItem *bar = _bar;
         _scene->addItem(bar);
@@ -258,20 +281,9 @@ void WorkJson::setScene(QGraphicsScene *scene)
     _scene = scene;
 }
 
-void WorkJson::setPositionScoreBar()
-{
-    if (_gameScene.isEmpty())
-    {
-        return;
-    }
-    _scoreBar->setPos(_view->width() - 100, -15);
-//    _bar->setRect(0, 0, _view->width(), 70);
-}
-
 void WorkJson::setViewCenter(const QMap <QString, qreal> viewCenter)
 {
     _viewCenter = viewCenter;
-    qDebug() << "_viewCenter:" << _viewCenter;
 }
 
 void WorkJson::setSizePlayer(const QMap <QString, qreal> sizePlayer)

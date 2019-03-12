@@ -38,7 +38,7 @@ private:
     QLineEdit *_lineEditNickname;
     QLineEdit *_lineEditHost;
     QLineEdit *_lineEditPort;
-    QComboBox *_listFall;
+    QComboBox *_resolutionBox;
     QLabel *_labelNickname;
     QLabel *_labelHost;
     QLabel *_labelPort;
@@ -52,6 +52,8 @@ private:
     void createElements();
 
     void createScene();
+    void setResolutionDefault();
+    void resolutionInit();
 };
 
 #endif // WIDGET_H
