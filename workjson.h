@@ -45,7 +45,7 @@ private:
     void toJsonResurrection();
 
     void toScore(const int score);
-    QMap <QString, qreal> setPositionHealth(QMap<QString, qreal> itemHUD);
+    QMap <QString, qreal> setPositionItems(QMap<QString, qreal> itemHUD);
 public:
     WorkJson(){}
     static WorkJson& Instance();

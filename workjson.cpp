@@ -136,11 +136,11 @@ void WorkJson::toHealth(const int health)
     itemHUD.insert("y", 62);
     itemHUD.insert("size", 30);
 
-    _bar->addHealth(health, setPositionHealth(itemHUD));
+    _bar->addHealth(health, setPositionItems(itemHUD));
     _healthHud = _bar->getHealth();
 }
 
-QMap <QString, qreal> WorkJson::setPositionHealth(QMap <QString, qreal> itemHUD)
+QMap <QString, qreal> WorkJson::setPositionItems(QMap <QString, qreal> itemHUD)
 {
     itemHUD["x"] = _scene->width() * itemHUD["x"] / 1920;
     itemHUD["y"] = _scene->height() - _scene->height() * itemHUD["y"] / 1080;
@@ -163,7 +163,7 @@ void WorkJson::toScore(const int score)
     itemHUD.insert("y", 62);
     itemHUD.insert("size", 30);
 
-    _bar->addScore(score, setPositionHealth(itemHUD));
+    _bar->addScore(score, setPositionItems(itemHUD));
     _scoreBar = _bar->getScore();
 }
 
