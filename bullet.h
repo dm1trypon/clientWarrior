@@ -12,7 +12,7 @@ public:
     void setPosition(const QMap <QString, qreal> position);
 
 private:
-    const QString PATH_TO_BULLET_IMG = ":/img/player.png";
+    const QString PATH_TO_BULLET_IMG = ":/img/bullet.png";
 
     int _id;
     QString _nickname;

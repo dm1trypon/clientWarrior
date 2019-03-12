@@ -3,5 +3,7 @@
         <file>img/player.png</file>
         <file>img/scene.jpg</file>
         <file>img/hud.png</file>
+        <file>img/bullet.png</file>
+        <file>img/bullet.webp</file>
     </qresource>
 </RCC>
