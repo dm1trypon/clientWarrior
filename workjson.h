@@ -33,7 +33,7 @@ private:
     QGraphicsScene *_scene;
     QGraphicsView *_view;
     Camera _camera;
-    HUD *_bar;
+    HUD *_hud;
     QGraphicsTextItem *_scoreBar;
     QGraphicsTextItem *_healthHud;
 

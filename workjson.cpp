@@ -124,20 +124,25 @@ bool WorkJson::checkFields(const QJsonObject dataJsonObj)
 
 void WorkJson::toHealth(const int health)
 {
-    if (_healthHud)
+    if (!_healthHud)
     {
-        _healthHud->setPlainText(QString::number(health));
+        QMap <QString, qreal> itemHUD;
+        itemHUD.insert("x", 170);
+        itemHUD.insert("y", 62);
+        itemHUD.insert("size", 30);
+
+        _hud->addHealth(health, setPositionItems(itemHUD));
+        _healthHud = _hud->getHealth();
 
         return;
     }
 
-    QMap <QString, qreal> itemHUD;
-    itemHUD.insert("x", 170);
-    itemHUD.insert("y", 62);
-    itemHUD.insert("size", 30);
+    if (_healthHud->toPlainText().toInt() == health)
+    {
+        return;
+    }
 
-    _bar->addHealth(health, setPositionItems(itemHUD));
-    _healthHud = _bar->getHealth();
+    _healthHud->setPlainText(QString::number(health));
 }
 
 QMap <QString, qreal> WorkJson::setPositionItems(QMap <QString, qreal> itemHUD)
@@ -151,20 +156,26 @@ QMap <QString, qreal> WorkJson::setPositionItems(QMap <QString, qreal> itemHUD)
 
 void WorkJson::toScore(const int score)
 {
-    if (_scoreBar)
+    if (!_scoreBar)
     {
-        _scoreBar->setPlainText(QString::number(score));
+        QMap <QString, qreal> itemHUD;
+        itemHUD.insert("x", 1750);
+        itemHUD.insert("y", 62);
+        itemHUD.insert("size", 30);
+
+        _hud->addScore(score, setPositionItems(itemHUD));
+        _scoreBar = _hud->getScore();
 
         return;
     }
 
-    QMap <QString, qreal> itemHUD;
-    itemHUD.insert("x", 1750);
-    itemHUD.insert("y", 62);
-    itemHUD.insert("size", 30);
+    if (_scoreBar->toPlainText().toInt() == score)
+    {
+        return;
+    }
 
-    _bar->addScore(score, setPositionItems(itemHUD));
-    _scoreBar = _bar->getScore();
+    _scoreBar->setPlainText(QString::number(score));
+
 }
 
 void WorkJson::toScene(const QJsonObject dataJsonObj)
@@ -194,15 +205,23 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
         sizeHUD.insert("width", _scene->width());
         sizeHUD.insert("height", _scene->height());
 
-        _bar = new HUD(positionHUD, sizeHUD);
+        _hud = new HUD(positionHUD, sizeHUD);
 
-        QGraphicsPixmapItem *bar = _bar;
-        _scene->addItem(bar);
+        QGraphicsPixmapItem *hud = _hud;
+        _scene->addItem(hud);
 
         _gameScene.insert("scene", gameScene);
     }
 
-    _gameScene["scene"]->setPosition(_camera.setPositionObjects(position));
+    const QMap <QString, qreal> posCamScene = _camera.setPositionObjects(position);
+
+    if (posCamScene["x"] == _gameScene["scene"]->x() &&
+            posCamScene["y"] == _gameScene["scene"]->y())
+    {
+        return;
+    }
+
+    _gameScene["scene"]->setPosition(posCamScene);
 }
 
 void WorkJson::toPlayers(const QJsonObject dataJsonObj)
@@ -212,7 +231,6 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
     foreach (QJsonValue playerValue, playersJsonArr)
     {
         const QString nickname = playerValue.toObject().value("nickname").toString();
-
 
         QMap <QString, qreal> position;
         position.insert("x", playerValue.toObject().value("pos_x").toInt());
@@ -239,7 +257,13 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
             _players.insert(nickname, player);
         }
 
-        _players[playerValue.toObject().value("nickname").toString()]->setPosition(_camera.setPositionObjects(position));
+        if (position["x"] == _players[nickname]->x() &&
+                position["y"] == _players[nickname]->y())
+        {
+            return;
+        }
+
+        _players[nickname]->setPosition(_camera.setPositionObjects(position));
     }
 }
 
