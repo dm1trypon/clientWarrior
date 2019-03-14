@@ -38,6 +38,7 @@ void Widget::setResolution(const int id)
 void Widget::createElements()
 {
     _view = new QGraphicsView(this);
+    _view->viewport()->installEventFilter(this);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
 
@@ -102,12 +103,36 @@ void Widget::resolutionInit()
     _resolutionBox->addItem("1920 x 1080", QVariant("1920:1080"));
 }
 
+bool Widget::eventFilter(QObject *target, QEvent *event)
+{
+    if (!_scene)
+    {
+        return false;
+    }
+
+    if (target == _scene)
+    {
+        if (event->type() == QEvent::GraphicsSceneMouseMove)
+        {
+            qDebug() << "GraphicsSceneMouseMove";
+
+            const QGraphicsSceneMouseEvent* const cursor = static_cast<const QGraphicsSceneMouseEvent*>(event);
+
+            WorkJson::Instance().onCursor(cursor->scenePos());
+        }
+    }
+
+    return QWidget::eventFilter(target, event);
+}
+
 void Widget::onConnected()
 {
     setFixedSize(static_cast<int>(_resolution["width"]),
             static_cast<int>(_resolution["height"]));
 
     createScene();
+    _scene->installEventFilter(this);
+
     QMap <QString, qreal> sceneCenter;
     sceneCenter.insert("x", _scene->width() / 2);
     sceneCenter.insert("y", _scene->height() / 2);

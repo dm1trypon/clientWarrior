@@ -12,7 +12,7 @@ HUD::HUD(const QMap<QString, qreal> position, const QMap<QString, qreal> size) :
 {
     setPixmap(QPixmap(PATH_TO_HUD_IMG).scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
     setPos(position["x"], position["y"]);
-    setZValue(9);
+    setZValue(5);
 }
 
 void HUD::addHealth(const int health, const QMap <QString, qreal> position)
@@ -22,7 +22,7 @@ void HUD::addHealth(const int health, const QMap <QString, qreal> position)
     _healthHud = new QGraphicsTextItem(QString::number(health), this);
     _healthHud->setPos(position["x"], position["y"]);
     _healthHud->setFont(_font);
-    _healthHud->setZValue(10);
+    _healthHud->setZValue(5);
     _healthHud->setDefaultTextColor(Qt::yellow);
 }
 
@@ -38,7 +38,7 @@ void HUD::addScore(const int score, const QMap <QString, qreal> position)
     _scoreHud = new QGraphicsTextItem(QString::number(score), this);
     _scoreHud->setPos(position["x"], position["y"]);
     _scoreHud->setFont(_font);
-    _scoreHud->setZValue(10);
+    _scoreHud->setZValue(5);
     _scoreHud->setDefaultTextColor(Qt::green);
 }
 

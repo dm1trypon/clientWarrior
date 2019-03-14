@@ -14,6 +14,8 @@ public:
 private:
     const QString PATH_TO_BULLET_IMG = ":/img/bullet.png";
 
+    QMap <QString, qreal> _speed;
+    QMap <QString, qreal> _size;
     int _id;
     QString _nickname;
 

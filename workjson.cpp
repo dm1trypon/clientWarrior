@@ -310,6 +310,11 @@ void WorkJson::setViewCenter(const QMap <QString, qreal> viewCenter)
     _viewCenter = viewCenter;
 }
 
+QMap <QString, qreal> WorkJson::getViewCenter()
+{
+    return _viewCenter;
+}
+
 void WorkJson::setSizePlayer(const QMap <QString, qreal> sizePlayer)
 {
     _sizePlayer = sizePlayer;
@@ -325,6 +330,11 @@ QString WorkJson::getNickname()
     return _nickname;
 }
 
+void WorkJson::onCursor(const QPointF cursor)
+{
+    emit signalCursor(cursor);
+}
+
 void WorkJson::setView(QGraphicsView *view)
 {
     _view = view;
@@ -333,6 +343,12 @@ void WorkJson::setView(QGraphicsView *view)
 QGraphicsView* WorkJson::getView()
 {
     return _view;
+}
+
+Player* WorkJson::getPlayer()
+{
+    qDebug() << _nickname << _players.keys();
+    return _players[_nickname];
 }
 
 QString WorkJson::toJsonVerify(const QString &method)

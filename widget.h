@@ -22,6 +22,8 @@ public:
     explicit Widget(QWidget *parent = nullptr);
     ~Widget();
 
+protected:
+    bool eventFilter(QObject *target, QEvent *event);
 private slots:
     void connectToServer();
     void onConnected();

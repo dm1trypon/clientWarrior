@@ -4,10 +4,13 @@
 #include <QDebug>
 
 Player::Player(const QString &nickname, const QMap <QString, qreal> position, const QMap <QString, qreal> size) :
-    QObject(), QGraphicsPixmapItem (nullptr)
+    QObject(), QGraphicsPixmapItem (nullptr),
+    _size(size)
 {
     setPixmap(QPixmap(PATH_TO_PLAYER_IMG).scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
     setPos(position["x"], position["y"]);
+    setZValue(3);
+
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
 
     if (WorkJson::Instance().getNickname() == nickname)
@@ -17,6 +20,7 @@ Player::Player(const QString &nickname, const QMap <QString, qreal> position, co
         size.insert("height", pixmap().height());
         setFlag(QGraphicsItem::ItemIsFocusable);
         setFocus();
+
         WorkJson::Instance().setSizePlayer(size);
     }
 }
@@ -46,3 +50,7 @@ void Player::keyReleaseEvent(QKeyEvent *event)
     _control.onHold(event, false);
 }
 
+QMap <QString, qreal> Player::getSize()
+{
+    return _size;
+}
