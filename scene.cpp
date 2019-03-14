@@ -89,13 +89,14 @@ void Scene::setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent)
 
 void Scene::rotate(const QPointF cursor)
 {
-    qDebug() << "rotate();";
+    qDebug() << "Ebat'";
+
+    _player = WorkJson::Instance().getPlayer();
 
     if (!_player)
     {
-        qDebug() << "new player rotate();";
-        _player = WorkJson::Instance().getPlayer();
-        qDebug() << _player->pos();
+        qDebug() << "Какого хуя?!";
+        return;
     }
 
     const QMap <QString, qreal> size = _player->getSize();
@@ -106,7 +107,7 @@ void Scene::rotate(const QPointF cursor)
     const qreal cy = _player->y() + size["height"] / 2;
     const qreal angle = qAtan2(cursor.y() - cy, cursor.x() - cx) * HALF_G / PI;
 
-    if (_player->rotation() == angle)
+    if (static_cast<int>(_player->rotation()) == static_cast<int>(angle))
     {
         return;
     }

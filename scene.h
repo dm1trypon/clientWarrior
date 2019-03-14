@@ -30,7 +30,7 @@ private:
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _cursor;
     QGraphicsRectItem *_border;
-    Player *_player;
+    Player *_player = nullptr;
 
     void setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent);
 

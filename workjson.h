@@ -50,6 +50,7 @@ private:
 
     QMap <QString, qreal> setPositionItems(QMap<QString, qreal> itemHUD);
 
+    bool isStop(const QPointF posNew, const QPointF posOld);
 public:
     WorkJson(){}
     static WorkJson& Instance();

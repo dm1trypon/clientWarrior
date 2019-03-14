@@ -11,8 +11,8 @@ WorkJson &WorkJson::Instance()
 
 void WorkJson::fromJson(const QString &data)
 {
-    QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
-    QString method = dataJsonObj.value("method").toString();
+    const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
+    const QString method = dataJsonObj.value("method").toString();
 
     if (method == "verify")
     {
@@ -215,8 +215,8 @@ void WorkJson::toScene(const QJsonObject dataJsonObj)
 
     const QMap <QString, qreal> posCamScene = _camera.setPositionObjects(position);
 
-    if (posCamScene["x"] == _gameScene["scene"]->x() &&
-            posCamScene["y"] == _gameScene["scene"]->y())
+    if (isStop(QPointF(posCamScene["x"], posCamScene["y"]),
+               _gameScene["scene"]->pos()))
     {
         return;
     }
@@ -230,7 +230,9 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
 
     foreach (QJsonValue playerValue, playersJsonArr)
     {
-        const QString nickname = playerValue.toObject().value("nickname").toString();
+        QString nickname = playerValue.toObject().value("nickname").toString();
+
+        qDebug() << "playerValue:" << playerValue;
 
         QMap <QString, qreal> position;
         position.insert("x", playerValue.toObject().value("pos_x").toInt());
@@ -250,6 +252,8 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
             toScore(score);
         }
 
+        qDebug() << "_players:" << _players.keys() << nickname;
+
         if (!_players.contains(nickname))
         {
             Player *player = new Player(nickname, _camera.setPositionObjects(position), size);
@@ -257,8 +261,8 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
             _players.insert(nickname, player);
         }
 
-        if (position["x"] == _players[nickname]->x() &&
-                position["y"] == _players[nickname]->y())
+        if (isStop(QPointF(position["x"], position["y"]),
+                   _players[nickname]->pos()))
         {
             return;
         }
@@ -348,6 +352,12 @@ QGraphicsView* WorkJson::getView()
 Player* WorkJson::getPlayer()
 {
     qDebug() << _nickname << _players.keys();
+
+    if (!_players.contains(_nickname))
+    {
+        return nullptr;
+    }
+
     return _players[_nickname];
 }
 
@@ -407,4 +417,9 @@ void WorkJson::toJsonResurrection()
     const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
 
     emit signalSend(data);
+}
+
+bool WorkJson::isStop(const QPointF posNew, const QPointF posOld)
+{
+    return posNew == posOld;
 }
