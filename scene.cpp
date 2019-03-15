@@ -4,7 +4,6 @@
 #include <QDebug>
 #include <QBrush>
 #include <QImage>
-#include <QtMath>
 
 Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> size) :
     QObject(), QGraphicsRectItem (nullptr)
@@ -22,7 +21,6 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     qDebug() << "Scene size: " << size["width"] << ":" << size["height"];
 
     connect(&_mouseTimer, &QTimer::timeout, this, &Scene::onPositionCursor);
-    connect(&WorkJson::Instance(), &WorkJson::signalCursor, this, &Scene::rotate);
 }
 
 void Scene::addBorder(const QMap <QString, qreal> position, const QMap <QString, qreal> size)
@@ -85,32 +83,4 @@ void Scene::setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent)
     cursor.insert("y", mouseEvent->scenePos().y());
 
     _cursor = cursor;
-}
-
-void Scene::rotate(const QPointF cursor)
-{
-    qDebug() << "Ebat'";
-
-    _player = WorkJson::Instance().getPlayer();
-
-    if (!_player)
-    {
-        qDebug() << "Какого хуя?!";
-        return;
-    }
-
-    const QMap <QString, qreal> size = _player->getSize();
-
-    _player->setTransformOriginPoint(size["width"] / 2, size["height"] / 2);
-
-    const qreal cx = _player->x() + size["width"] / 2;
-    const qreal cy = _player->y() + size["height"] / 2;
-    const qreal angle = qAtan2(cursor.y() - cy, cursor.x() - cx) * HALF_G / PI;
-
-    if (static_cast<int>(_player->rotation()) == static_cast<int>(angle))
-    {
-        return;
-    }
-
-    _player->setRotation(angle);
 }

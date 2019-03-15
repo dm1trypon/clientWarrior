@@ -232,8 +232,6 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
     {
         QString nickname = playerValue.toObject().value("nickname").toString();
 
-        qDebug() << "playerValue:" << playerValue;
-
         QMap <QString, qreal> position;
         position.insert("x", playerValue.toObject().value("pos_x").toInt());
         position.insert("y", playerValue.toObject().value("pos_y").toInt());
@@ -252,14 +250,14 @@ void WorkJson::toPlayers(const QJsonObject dataJsonObj)
             toScore(score);
         }
 
-        qDebug() << "_players:" << _players.keys() << nickname;
-
         if (!_players.contains(nickname))
         {
             Player *player = new Player(nickname, _camera.setPositionObjects(position), size);
             _scene->addItem(player);
             _players.insert(nickname, player);
         }
+
+        _players[nickname]->setRotation(playerValue.toObject().value("rotation").toDouble());
 
         if (isStop(QPointF(position["x"], position["y"]),
                    _players[nickname]->pos()))
@@ -334,9 +332,18 @@ QString WorkJson::getNickname()
     return _nickname;
 }
 
-void WorkJson::onCursor(const QPointF cursor)
+void WorkJson::toJsonCursor(const QPointF cursor)
 {
-    emit signalCursor(cursor);
+    QJsonObject dataJsonObj;
+    dataJsonObj.insert("method", "cursor");
+    dataJsonObj.insert("pos_x", cursor.x());
+    dataJsonObj.insert("pos_y", cursor.y());
+    dataJsonObj.insert("nickname", _nickname);
+
+    const QJsonDocument dataJsonDoc(dataJsonObj);
+    const QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
+
+    emit signalSend(data);
 }
 
 void WorkJson::setView(QGraphicsView *view)
@@ -351,8 +358,6 @@ QGraphicsView* WorkJson::getView()
 
 Player* WorkJson::getPlayer()
 {
-    qDebug() << _nickname << _players.keys();
-
     if (!_players.contains(_nickname))
     {
         return nullptr;
@@ -365,6 +370,8 @@ QString WorkJson::toJsonVerify(const QString &method)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", method);
+    dataJsonObj.insert("width", _resolution["width"] / 2);
+    dataJsonObj.insert("height", _resolution["height"] / 2);
     dataJsonObj.insert("nickname", _nickname);
 
     const QJsonDocument dataJsonDoc(dataJsonObj);

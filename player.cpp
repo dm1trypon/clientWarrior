@@ -10,6 +10,7 @@ Player::Player(const QString &nickname, const QMap <QString, qreal> position, co
     setPixmap(QPixmap(PATH_TO_PLAYER_IMG).scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
     setPos(position["x"], position["y"]);
     setZValue(3);
+    setTransformOriginPoint(size["width"] / 2, size["height"] / 2);
 
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
 

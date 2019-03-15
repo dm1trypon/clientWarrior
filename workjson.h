@@ -64,7 +64,7 @@ public:
     void setView(QGraphicsView *view);
     void toJsonShot(const QMap<QString, qreal> click);
     void setResolution(const QMap<QString, qreal> resolution);
-    void onCursor(const QPointF cursor);
+    void toJsonCursor(const QPointF cursor);
 
     QGraphicsView *getView();
 
@@ -78,7 +78,6 @@ public:
 signals:
     void signalSend(const QString &);
     void signalConnected();
-    void signalCursor(const QPointF);
 
 };
 

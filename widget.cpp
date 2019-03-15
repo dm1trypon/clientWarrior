@@ -4,6 +4,7 @@
 #include "ui_widget.h"
 
 #include <QDesktopWidget>
+#include <QGLWidget>
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
@@ -29,8 +30,8 @@ void Widget::setResolution(const int id)
 
     QString value = _resolutionBox->itemData(id).toString();
     QStringList resolution = value.split(":");
-    _resolution.insert("width", resolution[0].toInt());
-    _resolution.insert("height", resolution[1].toInt());
+    _resolution.insert("width", resolution[0].toDouble());
+    _resolution.insert("height", resolution[1].toDouble());
 
     WorkJson::Instance().setResolution(_resolution);
 }
@@ -39,6 +40,7 @@ void Widget::createElements()
 {
     _view = new QGraphicsView(this);
     _view->viewport()->installEventFilter(this);
+    _view->setViewport(new QGLWidget);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
 
@@ -89,6 +91,8 @@ void Widget::setResolutionDefault()
 {
     _resolution.insert("width", 640);
     _resolution.insert("height", 480);
+
+    WorkJson::Instance().setResolution(_resolution);
 }
 
 void Widget::resolutionInit()
@@ -114,11 +118,9 @@ bool Widget::eventFilter(QObject *target, QEvent *event)
     {
         if (event->type() == QEvent::GraphicsSceneMouseMove)
         {
-            qDebug() << "GraphicsSceneMouseMove";
-
             const QGraphicsSceneMouseEvent* const cursor = static_cast<const QGraphicsSceneMouseEvent*>(event);
 
-            WorkJson::Instance().onCursor(cursor->scenePos());
+            WorkJson::Instance().toJsonCursor(cursor->scenePos());
         }
     }
 
@@ -136,6 +138,7 @@ void Widget::onConnected()
     QMap <QString, qreal> sceneCenter;
     sceneCenter.insert("x", _scene->width() / 2);
     sceneCenter.insert("y", _scene->height() / 2);
+
     WorkJson::Instance().setViewCenter(sceneCenter);
 
     _scene->setStickyFocus(true);

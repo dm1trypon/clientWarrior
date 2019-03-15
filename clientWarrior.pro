@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui websockets
+QT       += core gui websockets opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

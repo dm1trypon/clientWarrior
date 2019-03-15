@@ -1,8 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "player.h"
-
 #include <QObject>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
@@ -24,13 +22,10 @@ public:
 
 private:
     const QString PATH_TO_SCENE_IMG = ":/img/scene.jpg";
-    const int HALF_G = 180;
-    const qreal PI = 3.14;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _cursor;
     QGraphicsRectItem *_border;
-    Player *_player = nullptr;
 
     void setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent);
 
@@ -41,7 +36,6 @@ protected:
 
 private slots:
     void onPositionCursor();
-    void rotate(const QPointF cursor);
 };
 
 
