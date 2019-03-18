@@ -28,6 +28,9 @@ private:
     const QStringList RIGHT_DOWN = {"right","down"};
 
     QStringList _keyList;
+    QMap <QStringList, QString> _keys;
+
+    void keys();
 };
 
 #endif // CONTROL_H

@@ -13,15 +13,17 @@ class Scene : public QObject, public QGraphicsRectItem
     Q_OBJECT
 public:
     Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> size);
-    void setPosition(const QMap <QString, qreal> position);
-    QMap <QString, qreal> getPosition();
-    QTimer _mouseTimer;
 
     QGraphicsRectItem *getBorder();
+    QMap <QString, qreal> getPosition();
+
     void addBorder(const QMap<QString, qreal> position, const QMap<QString, qreal> size);
+    void setPosition(const QMap <QString, qreal> position);
 
 private:
     const QString PATH_TO_SCENE_IMG = ":/img/scene.jpg";
+
+    QTimer _mouseTimer;
 
     QMap <QString, qreal> _position;
     QMap <QString, qreal> _cursor;

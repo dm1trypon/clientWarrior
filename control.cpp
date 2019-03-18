@@ -7,6 +7,7 @@
 Control::Control()
 {
     qDebug() << "Control has been created...";
+    keys();
 }
 
 void Control::onHold(QKeyEvent *event, const bool hold)
@@ -38,53 +39,38 @@ void Control::onHold(QKeyEvent *event, const bool hold)
         _keyList.append(key);
     }
 
-    if (_keyList == UP)
+    if (!_keys.contains(_keyList))
     {
-        WorkJson::Instance().toJsonKey("up", hold);
+        return;
     }
 
-    if (_keyList == DOWN)
-    {
-        WorkJson::Instance().toJsonKey("down", hold);
-    }
-
-    if (_keyList == LEFT)
-    {
-        WorkJson::Instance().toJsonKey("left", hold);
-    }
-
-    if (_keyList == RIGHT)
-    {
-        WorkJson::Instance().toJsonKey("right", hold);
-    }
-
-    if (_keyList == UP_LEFT || _keyList == LEFT_UP)
-    {
-        WorkJson::Instance().toJsonKey("left_up", hold);
-    }
-
-    if (_keyList == UP_RIGHT || _keyList == RIGHT_UP)
-    {
-        WorkJson::Instance().toJsonKey("right_up", hold);
-    }
-
-    if (_keyList == DOWN_LEFT || _keyList == LEFT_DOWN)
-    {
-        WorkJson::Instance().toJsonKey("left_down", hold);
-    }
-
-    if (_keyList == DOWN_RIGHT || _keyList == RIGHT_DOWN)
-    {
-        WorkJson::Instance().toJsonKey("right_down", hold);
-    }
+    WorkJson::Instance().toJsonKey(_keys[_keyList], hold);
 
     if (!hold)
     {
         _keyList.removeOne(key);
 
-        if (!_keyList.isEmpty())
+        if (_keyList.isEmpty())
         {
-            WorkJson::Instance().toJsonKey(_keyList.first(), true);
+            return;
         }
+
+        WorkJson::Instance().toJsonKey(_keyList.first(), true);
     }
+}
+
+void Control::keys()
+{
+    _keys.insert(UP, "up");
+    _keys.insert(DOWN, "down");
+    _keys.insert(LEFT, "left");
+    _keys.insert(RIGHT, "right");
+    _keys.insert(LEFT_DOWN, "left_down");
+    _keys.insert(LEFT_UP, "left_up");
+    _keys.insert(RIGHT_DOWN, "right_down");
+    _keys.insert(RIGHT_UP, "right_up");
+    _keys.insert(DOWN_LEFT, "left_down");
+    _keys.insert(DOWN_RIGHT, "right_down");
+    _keys.insert(UP_LEFT, "left_up");
+    _keys.insert(UP_RIGHT, "right_up");
 }

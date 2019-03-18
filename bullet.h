@@ -9,6 +9,7 @@ class Bullet : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Bullet(const QString &_nickname, const int id, const QMap <QString, qreal> position, const QMap <QString, qreal> size);
+
     void setPosition(const QMap <QString, qreal> position);
 
 private:
@@ -18,7 +19,6 @@ private:
     QMap <QString, qreal> _size;
     int _id;
     QString _nickname;
-
 };
 
 #endif // BULLET_H

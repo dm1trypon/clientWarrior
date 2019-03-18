@@ -1,5 +1,6 @@
 #include "widget.h"
 #include "workjson.h"
+#include "magic.h"
 #include "client.h"
 #include "ui_widget.h"
 
@@ -33,7 +34,7 @@ void Widget::setResolution(const int id)
     _resolution.insert("width", resolution[0].toDouble());
     _resolution.insert("height", resolution[1].toDouble());
 
-    WorkJson::Instance().setResolution(_resolution);
+    WorkJson::Instance().getMagic().setResolution(_resolution);
 }
 
 void Widget::createElements()
@@ -165,18 +166,21 @@ void Widget::createScene()
 {
     if (_fullscreen)
     {
+        const QRect desktop = QApplication::desktop()->screenGeometry();
+
         _scene = new QGraphicsScene(0, 0,
-                                    QApplication::desktop()->screenGeometry().width() - 2,
-                                    QApplication::desktop()->screenGeometry().height() - 2,
+                                    desktop.width() - PADDING_VIEW,
+                                    desktop.height() - PADDING_VIEW,
                                     this);
 
         showFullScreen();
+
         return;
     }
 
     _scene = new QGraphicsScene(0, 0,
-                                _resolution["width"] - 2,
-                                _resolution["height"] - 2,
+                                _resolution["width"] - PADDING_VIEW,
+                                _resolution["height"] - PADDING_VIEW,
                                 this);
 }
 
@@ -186,6 +190,7 @@ void Widget::typeWindow()
     {
         _fullscreen = false;
         _buttonTypeWindow->setText("Fullscreen");
+
         return;
     }
 
@@ -198,6 +203,22 @@ void Widget::connectToServer()
     _host = _lineEditHost->text();
     _port = _lineEditPort->text();
     _nickname = _lineEditNickname->text();
+
+    if (_host.isEmpty())
+    {
+        return;
+    }
+
+    if (_port.isEmpty())
+    {
+        return;
+    }
+
+    if (_nickname.isEmpty())
+    {
+        return;
+    }
+
     WorkJson::Instance().setNickname(_nickname);
     new Client(QUrl("ws://" + _host + ":" + _port));
 }

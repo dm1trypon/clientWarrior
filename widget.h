@@ -24,13 +24,16 @@ public:
 
 protected:
     bool eventFilter(QObject *target, QEvent *event);
+
 private slots:
     void connectToServer();
     void onConnected();
     void typeWindow();
-
     void setResolution(const int id);
+
 private:
+    const int PADDING_VIEW = 2;
+
     Ui::Widget *ui;
     QGraphicsScene *_scene;
     QGraphicsView *_view;
@@ -49,10 +52,10 @@ private:
     QString _port;
     QString _nickname;
     QMap <QString, qreal> _resolution;
+
     bool _fullscreen = false;
 
     void createElements();
-
     void createScene();
     void setResolutionDefault();
     void resolutionInit();
