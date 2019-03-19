@@ -14,6 +14,8 @@ namespace Ui {
 class Widget;
 }
 
+class Magic;
+
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -59,6 +61,8 @@ private:
     void createScene();
     void setResolutionDefault();
     void resolutionInit();
+
+    Magic *_magic;
 };
 
 #endif // WIDGET_H

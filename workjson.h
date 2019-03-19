@@ -15,7 +15,14 @@ private:
     WorkJson(const WorkJson& root) = delete;
     WorkJson& operator = (const WorkJson&) = delete;
 
-    QString _nickname;
+    const QString METHOD = "method";
+    const QString VERIFY = "verify";
+    const QString CONNECTION = "connection";
+    const QString DISCONNECTION = "disconnection";
+    const QString REMOVE = "remove";
+    const QString OBJECTS = "objects";
+    const QString DIE = "die";
+    const QString NICKNAME = "nickname";
 
     bool checkFields(const QJsonObject dataJsonObj);
 
@@ -32,8 +39,10 @@ public:
     void toJsonShot(const QMap<QString, qreal> click);
     void toJsonCursor(const QPointF cursor);
 
-    QString toJsonVerify(const QString &method);
+    QString toJsonVerify();
 
+    Magic *setMagic();
+    Magic *getMagic();
 signals:
     void signalSend(const QString &);
     void signalConnected();

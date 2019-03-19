@@ -1,6 +1,5 @@
 #include "widget.h"
 #include "workjson.h"
-#include "magic.h"
 #include "client.h"
 #include "ui_widget.h"
 
@@ -9,7 +8,8 @@
 
 Widget::Widget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget),
+    _magic(WorkJson::Instance().setMagic())
 {
     ui->setupUi(this);
     createElements();
@@ -34,7 +34,7 @@ void Widget::setResolution(const int id)
     _resolution.insert("width", resolution[0].toDouble());
     _resolution.insert("height", resolution[1].toDouble());
 
-    WorkJson::Instance().getMagic().setResolution(_resolution);
+    _magic->setResolution(_resolution);
 }
 
 void Widget::createElements()
@@ -44,8 +44,6 @@ void Widget::createElements()
     _view->setViewport(new QGLWidget);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
-
-    WorkJson::Instance().setView(_view);
 
     _mainLayout = new QVBoxLayout;
 
@@ -93,7 +91,7 @@ void Widget::setResolutionDefault()
     _resolution.insert("width", 640);
     _resolution.insert("height", 480);
 
-    WorkJson::Instance().setResolution(_resolution);
+    _magic->setResolution(_resolution);
 }
 
 void Widget::resolutionInit()
@@ -140,12 +138,16 @@ void Widget::onConnected()
     sceneCenter.insert("x", _scene->width() / 2);
     sceneCenter.insert("y", _scene->height() / 2);
 
-    WorkJson::Instance().setViewCenter(sceneCenter);
+    qDebug() << "before _magic";
+    _magic->setSceneCenter(sceneCenter);
+    qDebug() << "after _magic";
 
     _scene->setStickyFocus(true);
     _view->setScene(_scene);
 
-    WorkJson::Instance().setScene(_scene);
+    qDebug() << "before _magic";
+    _magic->setScene(_scene);
+    qDebug() << "after _magic";
 
     _view->show();
     _view->setSceneRect(_scene->sceneRect());
@@ -160,6 +162,7 @@ void Widget::onConnected()
     _buttonConnect->hide();
     _buttonTypeWindow->hide();
     _mainLayout->setMargin(0);
+    qDebug() << "end onConnected()";
 }
 
 void Widget::createScene()
@@ -219,6 +222,6 @@ void Widget::connectToServer()
         return;
     }
 
-    WorkJson::Instance().setNickname(_nickname);
+    _magic->setNickname(_nickname);
     new Client(QUrl("ws://" + _host + ":" + _port));
 }

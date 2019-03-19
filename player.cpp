@@ -14,7 +14,7 @@ Player::Player(const QString &nickname, const QMap <QString, qreal> position, co
 
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
 
-    if (WorkJson::Instance().getNickname() == nickname)
+    if (WorkJson::Instance().getMagic()->getNickname() == nickname)
     {
         QMap <QString, qreal> size;
         size.insert("width", pixmap().width());
@@ -22,7 +22,7 @@ Player::Player(const QString &nickname, const QMap <QString, qreal> position, co
         setFlag(QGraphicsItem::ItemIsFocusable);
         setFocus();
 
-        WorkJson::Instance().setSizePlayer(size);
+        WorkJson::Instance().getMagic()->setSizePlayer(size);
     }
 }
 

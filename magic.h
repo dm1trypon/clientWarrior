@@ -9,9 +9,9 @@
 
 #include <QObject>
 #include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QGraphicsPixmapItem>
 #include <QMap>
+#include <QJsonObject>
 
 class Magic : public QObject
 {
@@ -19,47 +19,52 @@ class Magic : public QObject
 public:
     Magic(QObject *parent);
 
-    void setScene(QGraphicsScene *scene);   //
-    void setNickname(const QString &nickname);  //
-    void setViewCenter(const QMap<QString, qreal> viewCenter);  //
-    void setSizePlayer(const QMap<QString, qreal> sizePlayer);  //
-    void setView(QGraphicsView *view);  //
-    void setResolution(const QMap<QString, qreal> resolution);  //
+    QString getNickname();
+
+    void setScene(QGraphicsScene *scene);
+    void setNickname(const QString &nickname);
+    void setSceneCenter(const QMap<QString, qreal> viewCenter);
+    void setSizePlayer(const QMap<QString, qreal> sizePlayer);
+    void setResolution(const QMap<QString, qreal> resolution);
+
+    QMap <QString, Player *> getPlayers();
+    QMap<int, Bullet *> getBullets();
+
+    void draw(const QJsonObject dataJsonObj);
+    void delPlayer(const QString &nickname);
+    void delBullets(const int id);
+
+    QMap<QString, qreal> getResolution();
+    QMap<QString, qreal> setShot(const QMap<QString, qreal> shot);
 
 private:
-    QMap <QString, Player *> _players;  //
-    QMap <int, Bullet *> _bullets;  //
-    QMap <QString, Scene *> _gameScene; //
+    QString _nickname;
 
-    QMap <QString, qreal> _viewCenter;  //
-    QMap <QString, qreal> _sizePlayer;  //
-    QMap <QString, qreal> _resolution;  //
+    QMap <QString, Player *> _players;
+    QMap <int, Bullet *> _bullets;
+    QMap <QString, Scene *> _gameScene;
 
-    QGraphicsScene *_scene; //
-    QGraphicsView *_view;   //
+    QMap <QString, qreal> _sceneCenter;
+    QMap <QString, qreal> _sizePlayer;
+    QMap <QString, qreal> _resolution;
 
-    Camera _camera; //
-    HUD *_hud;  //
+    QGraphicsScene *_scene = nullptr;
 
-    bool isStop(const QPointF posNew, const QPointF posOld); //
+    Camera _camera;
+    HUD *_hud;
 
-    void toScene(const QJsonObject dataJsonObj);    //
-    void toPlayers(const QJsonObject dataJsonObj);  //
-    void toBullets(const QJsonObject dataJsonObj);  //
-    void toHealth(const int health);    //
-    void toScore(const int score);  //
+    bool isStop(const QPointF posNew, const QPointF posOld);
 
-    QGraphicsTextItem *_scoreBar;   //
-    QGraphicsTextItem *_healthHud;  //
+    void toScene(const QJsonObject dataJsonObj);
+    void toPlayers(const QJsonObject dataJsonObj);
+    void toBullets(const QJsonObject dataJsonObj);
+    void toHealth(const int health);
+    void toScore(const int score);
 
-    QGraphicsView *getView();   //
+    QGraphicsTextItem *_scoreBar = nullptr;
+    QGraphicsTextItem *_healthHud = nullptr;
 
-    Player *getPlayer();    //
-
-    QMap <QString, qreal> getViewCenter();  //
-
-    QString getNickname();  //
-
+    QMap <QString, qreal> getSceneCenter();
     QMap <QString, qreal> setPositionItems(QMap<QString, qreal> itemHUD);
 };
 

@@ -12,77 +12,77 @@ WorkJson &WorkJson::Instance()
 void WorkJson::fromJson(const QString &data)
 {
     const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
-    const QString method = dataJsonObj.value("method").toString();
+    const QString method = dataJsonObj.value(METHOD).toString();
+    const QString myName = _magic->getNickname();
 
-    if (method == "verify")
+    QString nickname;
+
+    if (dataJsonObj.contains(NICKNAME))
     {
-        emit signalSend(toJsonVerify(method));
+        nickname = dataJsonObj.value(NICKNAME).toString();
     }
 
-    if (method == "connection")
+    if (method == VERIFY)
     {
-        QString nickname = dataJsonObj.value("nickname").toString();
-
-        if (nickname == _nickname)
-        {
-            emit signalConnected();
-        }
+        emit signalSend(toJsonVerify());
     }
 
-    if (method == "disconnection")
+    if (method == CONNECTION)
     {
-        const QString nickname = dataJsonObj.value("nickname").toString();
-
-        if (!_players.contains(nickname))
+        if (nickname != myName)
         {
-            qWarning() << "Warning! Player is not exist for delete from game scene!";
             return;
         }
 
-        _players[nickname]->deleteLater();
-        _players.remove(nickname);
+        emit signalConnected();
     }
 
-    if (method == "remove")
+    if (method == DISCONNECTION)
+    {
+        if (!_magic->getPlayers().contains(nickname))
+        {
+            qWarning() << "Warning! Player is not exist for delete from game scene!";
+
+            return;
+        }
+
+        _magic->delPlayer(nickname);
+    }
+
+    if (method == REMOVE)
     {
         const int id = dataJsonObj.value("id_bullet").toInt();
 
-        if (!_bullets.contains(id))
+        if (!_magic->getBullets().contains(id))
         {
             qWarning() << "Warning! Bullet is not exist for delete from game scene!";
             return;
         }
 
-        _bullets[id]->deleteLater();
-        _bullets.remove(id);
+        _magic->delBullets(id);
     }
 
-    if (method == "objects")
+    if (method == OBJECTS)
     {
         if (!checkFields(dataJsonObj))
         {
             return;
         }
 
-        toScene(dataJsonObj);
-        toPlayers(dataJsonObj);
-        toBullets(dataJsonObj);
+        _magic->draw(dataJsonObj);
     }
 
-    if (method == "die")
+    if (method == DIE)
     {
-        const QString nickname = dataJsonObj.value("nickname").toString();
-
-        if (!_players.contains(nickname))
+        if (!_magic->getPlayers().contains(nickname))
         {
             qWarning() << "Warning! Player is not exist for delete from game scene!";
             return;
         }
 
-        _players[nickname]->deleteLater();
-        _players.remove(nickname);
+        _magic->delPlayer(nickname);
 
-        if (_nickname != nickname)
+        if (myName != nickname)
         {
             return;
         }
@@ -128,7 +128,7 @@ void WorkJson::toJsonCursor(const QPointF cursor)
     dataJsonObj.insert("method", "cursor");
     dataJsonObj.insert("pos_x", cursor.x());
     dataJsonObj.insert("pos_y", cursor.y());
-    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("nickname", _magic->getNickname());
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
@@ -136,13 +136,15 @@ void WorkJson::toJsonCursor(const QPointF cursor)
     emit signalSend(data);
 }
 
-QString WorkJson::toJsonVerify(const QString &method)
+QString WorkJson::toJsonVerify()
 {
+    const QMap <QString, qreal> resolution = _magic->getResolution();
+
     QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", method);
-    dataJsonObj.insert("width", _resolution["width"] / 2);
-    dataJsonObj.insert("height", _resolution["height"] / 2);
-    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("method", VERIFY);
+    dataJsonObj.insert("width", resolution["width"] / 2);
+    dataJsonObj.insert("height", resolution["height"] / 2);
+    dataJsonObj.insert("nickname", _magic->getNickname());
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data(dataJsonDoc.toJson(QJsonDocument::Compact));
@@ -154,7 +156,7 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "control");
-    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("nickname", _magic->getNickname());
     dataJsonObj.insert("key", key);
     dataJsonObj.insert("hold", hold);
 
@@ -166,15 +168,16 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
 
 void WorkJson::toJsonShot(const QMap <QString, qreal> shot)
 { 
-    if (!_players.contains(_nickname))
+    if (!_magic->getPlayers().contains(_magic->getNickname()))
     {
         return;
     }
 
-    const QMap <QString, qreal> newShot = _camera.setShot(shot);
+    const QMap <QString, qreal> newShot = _magic->setShot(shot);
+
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "shot");
-    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("nickname", _magic->getNickname());
     dataJsonObj.insert("x", newShot["x"]);
     dataJsonObj.insert("y", newShot["y"]);
 
@@ -188,7 +191,7 @@ void WorkJson::toJsonResurrection()
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "resurrection");
-    dataJsonObj.insert("nickname", _nickname);
+    dataJsonObj.insert("nickname", _magic->getNickname());
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
@@ -196,7 +199,7 @@ void WorkJson::toJsonResurrection()
     emit signalSend(data);
 }
 
-void WorkJson::setMagic()
+Magic *WorkJson::setMagic()
 {
     if (_magic)
     {
@@ -205,8 +208,10 @@ void WorkJson::setMagic()
 
     if (!_magic)
     {
-        _magic = new Magic();
+        _magic = new Magic(this);
     }
+
+    return _magic;
 }
 
 Magic *WorkJson::getMagic()

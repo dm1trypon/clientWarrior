@@ -1,5 +1,8 @@
 #include "magic.h"
 
+#include <QJsonArray>
+#include <QDebug>
+
 Magic::Magic(QObject *parent) : QObject(parent)
 {
 
@@ -63,7 +66,7 @@ void Magic::toScore(const int score)
 
 void Magic::toScene(const QJsonObject dataJsonObj)
 {
-    QJsonObject sceneJsonObject = dataJsonObj.value("scene").toObject();
+    const QJsonObject sceneJsonObject = dataJsonObj.value("scene").toObject();
 
     QMap <QString, qreal> position;
     position.insert("x", sceneJsonObject.value("pos_x").toInt());
@@ -94,6 +97,8 @@ void Magic::toScene(const QJsonObject dataJsonObj)
         _scene->addItem(hud);
 
         _gameScene.insert("scene", gameScene);
+        _gameScene["scene"]->setPosition(_camera.setPositionObjects(position));
+
     }
 
     const QMap <QString, qreal> posCamScene = _camera.setPositionObjects(position);
@@ -109,7 +114,7 @@ void Magic::toScene(const QJsonObject dataJsonObj)
 
 void Magic::toPlayers(const QJsonObject dataJsonObj)
 {
-    QJsonArray playersJsonArr = dataJsonObj.value("players").toArray();
+    const QJsonArray playersJsonArr = dataJsonObj.value("players").toArray();
 
     foreach (QJsonValue playerValue, playersJsonArr)
     {
@@ -123,12 +128,13 @@ void Magic::toPlayers(const QJsonObject dataJsonObj)
         size.insert("width", playerValue.toObject().value("width").toInt());
         size.insert("height", playerValue.toObject().value("height").toInt());
 
+
         if (nickname == _nickname)
         {
             const int score = playerValue.toObject().value("score").toInt();
 
             _camera.setSizePlayer(size);
-            _camera.setOffsetFactor(position, _viewCenter);
+            _camera.setOffsetFactor(position, _sceneCenter);
             toHealth(playerValue.toObject().value("life").toInt());
             toScore(score);
         }
@@ -154,7 +160,7 @@ void Magic::toPlayers(const QJsonObject dataJsonObj)
 
 void Magic::toBullets(const QJsonObject dataJsonObj)
 {
-    QJsonArray bulletsJsonArr = dataJsonObj.value("bullets").toArray();
+    const QJsonArray bulletsJsonArr = dataJsonObj.value("bullets").toArray();
 
     foreach (QJsonValue bulletValue, bulletsJsonArr)
     {
@@ -180,9 +186,48 @@ void Magic::toBullets(const QJsonObject dataJsonObj)
     }
 }
 
-void Magic::setResolution(const QMap <QString, qreal> resolution)
+void Magic::draw(const QJsonObject dataJsonObj) // draw objects on game scene
+{
+    toScene(dataJsonObj);
+    toPlayers(dataJsonObj);
+    toBullets(dataJsonObj);
+}
+
+QMap <QString, Player *> Magic::getPlayers() // get all players on the game scene
+{
+    return _players;
+}
+
+QMap <int, Bullet *> Magic::getBullets() // get all bullets on the game scene
+{
+    return _bullets;
+}
+
+void Magic::delPlayer(const QString &nickname) // delete players by nickname
+{
+    _players[nickname]->deleteLater();
+    _players.remove(nickname);
+}
+
+void Magic::delBullets(const int id) // delete bullets by id
+{
+    _bullets[id]->deleteLater();
+    _bullets.remove(id);
+}
+
+void Magic::setResolution(const QMap <QString, qreal> resolution) // set resolution game
 {
     _resolution = resolution;
+}
+
+QMap <QString, qreal> Magic::getResolution() // get resolution game
+{
+    return _resolution;
+}
+
+QMap <QString, qreal> Magic::setShot(const QMap <QString, qreal> shot) // sets the mouse coordinates relative to the player
+{
+    return _camera.setShot(shot);
 }
 
 void Magic::setScene(QGraphicsScene *scene)
@@ -190,52 +235,32 @@ void Magic::setScene(QGraphicsScene *scene)
     _scene = scene;
 }
 
-void Magic::setViewCenter(const QMap <QString, qreal> viewCenter)
+void Magic::setSceneCenter(const QMap <QString, qreal> sceneCenter) // set game scene view center
 {
-    _viewCenter = viewCenter;
+    _sceneCenter = sceneCenter;
 }
 
-QMap <QString, qreal> Magic::getViewCenter()
+QMap <QString, qreal> Magic::getSceneCenter() // get game scene view center(?????)
 {
-    return _viewCenter;
+    return _sceneCenter;
 }
 
-void Magic::setSizePlayer(const QMap <QString, qreal> sizePlayer)
+void Magic::setSizePlayer(const QMap <QString, qreal> sizePlayer) // set size your player
 {
     _sizePlayer = sizePlayer;
 }
 
-void Magic::setNickname(const QString &nickname)
+void Magic::setNickname(const QString &nickname) // set your nickname
 {
     _nickname = nickname;
 }
 
-QString Magic::getNickname()
+QString Magic::getNickname() // get your nickname
 {
     return _nickname;
 }
 
-void Magic::setView(QGraphicsView *view)
-{
-    _view = view;
-}
-
-QGraphicsView* Magic::getView()
-{
-    return _view;
-}
-
-Player* Magic::getPlayer()
-{
-    if (!_players.contains(_nickname))
-    {
-        return nullptr;
-    }
-
-    return _players[_nickname];
-}
-
-bool WorkJson::isStop(const QPointF posNew, const QPointF posOld)
+bool Magic::isStop(const QPointF posNew, const QPointF posOld)
 {
     return posNew == posOld;
 }
