@@ -7,7 +7,7 @@
 class HUD : public QObject, public QGraphicsPixmapItem
 {
 public:
-    HUD(const QMap <QString, qreal> position, const QMap <QString, qreal> size);
+    HUD(QPointF position, const QRectF sceneProp);
 
     void addScore(const int score, const QMap<QString, qreal> position);
     void addHealth(const int health, const QMap <QString, qreal> position);
@@ -20,7 +20,6 @@ private:
 
     QGraphicsTextItem *_scoreHud;
     QGraphicsTextItem *_healthHud;
-    QMap <QString, qreal> _size;
 };
 
 #endif // BAR_H

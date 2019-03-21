@@ -19,23 +19,22 @@ class Magic : public QObject
 public:
     Magic(QObject *parent);
 
-    QString getNickname();
+    QString getNickname();                                           // get your nickname
 
-    void setScene(QGraphicsScene *scene);
-    void setNickname(const QString &nickname);
-    void setSceneCenter(const QMap<QString, qreal> viewCenter);
-    void setSizePlayer(const QMap<QString, qreal> sizePlayer);
-    void setResolution(const QMap<QString, qreal> resolution);
+    void setScene(QGraphicsScene *scene);                            // sets game scene
+    void setNickname(const QString &nickname);                       // set your nickname
+    void setSizePlayer(const QMap<QString, qreal> sizePlayer);       // set size your player
+    void setResolution(const QMap<QString, qreal> resolution);       // set resolution game
 
-    QMap <QString, Player *> getPlayers();
-    QMap<int, Bullet *> getBullets();
+    void draw(const QJsonObject dataJsonObj);                        // draw objects on game scene
+    void delPlayer(const QString &nickname);                         // delete players by nickname
+    void delBullets(const int id);                                   // delete bullets by id
 
-    void draw(const QJsonObject dataJsonObj);
-    void delPlayer(const QString &nickname);
-    void delBullets(const int id);
+    QMap <QString, Player *> getPlayers();                           // get all players on the game scene
+    QMap <int, Bullet *> getBullets();                               // get all bullets on the game scene
 
-    QMap<QString, qreal> getResolution();
-    QMap<QString, qreal> setShot(const QMap<QString, qreal> shot);
+    QMap <QString, qreal> getResolution();                           // get resolution game
+    QMap <QString, qreal> setShot(const QMap<QString, qreal> shot);  // sets the mouse coordinates relative to the player
 
 private:
     QString _nickname;
@@ -44,9 +43,10 @@ private:
     QMap <int, Bullet *> _bullets;
     QMap <QString, Scene *> _gameScene;
 
-    QMap <QString, qreal> _sceneCenter;
     QMap <QString, qreal> _sizePlayer;
     QMap <QString, qreal> _resolution;
+
+    bool _isSet = false;
 
     QGraphicsScene *_scene = nullptr;
 
@@ -54,6 +54,7 @@ private:
     HUD *_hud;
 
     bool isStop(const QPointF posNew, const QPointF posOld);
+    bool isConfigured(const QString &nickname);
 
     void toScene(const QJsonObject dataJsonObj);
     void toPlayers(const QJsonObject dataJsonObj);
@@ -64,7 +65,6 @@ private:
     QGraphicsTextItem *_scoreBar = nullptr;
     QGraphicsTextItem *_healthHud = nullptr;
 
-    QMap <QString, qreal> getSceneCenter();
     QMap <QString, qreal> setPositionItems(QMap<QString, qreal> itemHUD);
 };
 

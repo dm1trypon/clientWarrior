@@ -18,44 +18,44 @@ void Control::onHold(QKeyEvent *event, const bool hold)
     case Qt::Key_A:
         key = "left";
         break;
+
     case Qt::Key_D:
         key = "right";
         break;
+
     case Qt::Key_W:
         key = "up";
         break;
+
     case Qt::Key_S:
         key = "down";
         break;
+
     case Qt::Key_Escape:
         qApp->exit();
         break;
+
     default:
         break;
     }
 
-    if (hold)
-    {
-        _keyList.append(key);
-    }
+    if (hold) {
+        if (_keyList.count() == 2) {
+            _keyList.first() = _keyList.last();
+            _keyList.removeLast();
+        }
 
-    if (!_keys.contains(_keyList))
-    {
-        return;
+        _keyList.append(key);
     }
 
     WorkJson::Instance().toJsonKey(_keys[_keyList], hold);
 
-    if (!hold)
-    {
+    if (!hold) {
         _keyList.removeOne(key);
 
-        if (_keyList.isEmpty())
-        {
-            return;
+        if (!_keyList.isEmpty()) {
+            WorkJson::Instance().toJsonKey(_keyList.first(), true);
         }
-
-        WorkJson::Instance().toJsonKey(_keyList.first(), true);
     }
 }
 

@@ -12,11 +12,14 @@ Client::Client(const QUrl &url, QObject *parent) :
     connect(&_webSocket, &QWebSocket::connected, this, &Client::onConnected);
     connect(&_webSocket, &QWebSocket::disconnected, this, &Client::closed);
 
-    connect(&_webSocket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
-         [=](QAbstractSocket::SocketError)
-    {
-        qWarning().noquote() << "Host:" << _url.toDisplayString() << ". Error:" << _webSocket.errorString();
+    connect(&_webSocket,
+            static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
+            [=](QAbstractSocket::SocketError) {
+        qWarning().noquote() << "Host:" << _url.toDisplayString()
+                             << ". Error:" << _webSocket.errorString();
+
         deleteLater();
+
         return;
     });
 

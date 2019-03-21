@@ -1,21 +1,21 @@
 #include "camera.h"
 
 #include <QDebug>
+#include <QRectF>
 
 Camera::Camera()
 {
     qDebug() << "Camera has been created!";
 }
 
-void Camera::setOffsetFactor(const QMap <QString, qreal> position, const QMap <QString, qreal> viewCenter)
+void Camera::setOffsetFactor(const QMap <QString, qreal> position, const QRectF sceneProp)
 {
-    if (!_factor.isEmpty())
-    {
+    if (!_factor.isEmpty()) {
         _factor.clear();
     }
 
-    _factor.insert("xFactor", position["x"] - viewCenter["x"]);
-    _factor.insert("yFactor", position["y"] - viewCenter["y"]);
+    _factor.insert("xFactor", position["x"] - sceneProp.width() / 2);
+    _factor.insert("yFactor", position["y"] - sceneProp.height() / 2);
 }
 
 void Camera::setSizePlayer(const QMap <QString, qreal> sizePlayer)

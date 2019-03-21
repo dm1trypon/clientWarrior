@@ -10,7 +10,7 @@ class Camera : public QObject
 public:
     Camera();
 
-    void setOffsetFactor(const QMap <QString, qreal> position, const QMap <QString, qreal> viewCenter);
+    void setOffsetFactor(const QMap <QString, qreal> position, const QRectF sceneProp);
     void setSizePlayer(const QMap <QString, qreal> sizePlayer);
 
     QMap <QString, qreal> setPositionObjects(const QMap <QString, qreal> position);

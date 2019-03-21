@@ -14,8 +14,7 @@ Player::Player(const QString &nickname, const QMap <QString, qreal> position, co
 
     qDebug() << "Player has been created (" << position["x"] << ":" << position["y"] << ")";
 
-    if (WorkJson::Instance().getMagic()->getNickname() == nickname)
-    {
+    if (WorkJson::Instance().getMagic()->getNickname() == nickname) {
         QMap <QString, qreal> size;
         size.insert("width", pixmap().width());
         size.insert("height", pixmap().height());
@@ -33,8 +32,7 @@ void Player::setPosition(const QMap <QString, qreal> position)
 
 void Player::keyPressEvent(QKeyEvent *event)
 {
-    if (event->isAutoRepeat())
-    {
+    if (event->isAutoRepeat()) {
         return;
     }
 
@@ -43,8 +41,7 @@ void Player::keyPressEvent(QKeyEvent *event)
 
 void Player::keyReleaseEvent(QKeyEvent *event)
 {
-    if (event->isAutoRepeat())
-    {
+    if (event->isAutoRepeat()) {
         return;
     }
 

@@ -17,30 +17,24 @@ void WorkJson::fromJson(const QString &data)
 
     QString nickname;
 
-    if (dataJsonObj.contains(NICKNAME))
-    {
+    if (dataJsonObj.contains(NICKNAME)) {
         nickname = dataJsonObj.value(NICKNAME).toString();
     }
 
-    if (method == VERIFY)
-    {
+    if (method == VERIFY) {
         emit signalSend(toJsonVerify());
     }
 
-    if (method == CONNECTION)
-    {
-        if (nickname != myName)
-        {
+    if (method == CONNECTION) {
+        if (nickname != myName) {
             return;
         }
 
         emit signalConnected();
     }
 
-    if (method == DISCONNECTION)
-    {
-        if (!_magic->getPlayers().contains(nickname))
-        {
+    if (method == DISCONNECTION) {
+        if (!_magic->getPlayers().contains(nickname)) {
             qWarning() << "Warning! Player is not exist for delete from game scene!";
 
             return;
@@ -49,12 +43,10 @@ void WorkJson::fromJson(const QString &data)
         _magic->delPlayer(nickname);
     }
 
-    if (method == REMOVE)
-    {
+    if (method == REMOVE) {
         const int id = dataJsonObj.value("id_bullet").toInt();
 
-        if (!_magic->getBullets().contains(id))
-        {
+        if (!_magic->getBullets().contains(id)) {
             qWarning() << "Warning! Bullet is not exist for delete from game scene!";
             return;
         }
@@ -62,28 +54,23 @@ void WorkJson::fromJson(const QString &data)
         _magic->delBullets(id);
     }
 
-    if (method == OBJECTS)
-    {
-        if (!checkFields(dataJsonObj))
-        {
+    if (method == OBJECTS) {
+        if (!checkFields(dataJsonObj)) {
             return;
         }
 
         _magic->draw(dataJsonObj);
     }
 
-    if (method == DIE)
-    {
-        if (!_magic->getPlayers().contains(nickname))
-        {
+    if (method == DIE) {
+        if (!_magic->getPlayers().contains(nickname)) {
             qWarning() << "Warning! Player is not exist for delete from game scene!";
             return;
         }
 
         _magic->delPlayer(nickname);
 
-        if (myName != nickname)
-        {
+        if (myName != nickname) {
             return;
         }
 
@@ -95,26 +82,22 @@ void WorkJson::fromJson(const QString &data)
 
 bool WorkJson::checkFields(const QJsonObject dataJsonObj)
 {
-    if (!dataJsonObj.contains("players"))
-    {
+    if (!dataJsonObj.contains("players")) {
         qWarning() << "Warning! Field 'players' is not exist!";
         return false;
     }
 
-    if (!dataJsonObj.contains("scene"))
-    {
+    if (!dataJsonObj.contains("scene")) {
         qWarning() << "Warning! Field 'scene' is not exist!";
         return false;
     }
 
-    if (!dataJsonObj.value("players").isArray())
-    {
+    if (!dataJsonObj.value("players").isArray()) {
         qWarning() << "Warning! Field 'players' is not array!";
         return false;
     }
 
-    if (!dataJsonObj.value("scene").isObject())
-    {
+    if (!dataJsonObj.value("scene").isObject()) {
         qWarning() << "Warning! Field 'scene' is not object!";
         return false;
     }
@@ -168,8 +151,7 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
 
 void WorkJson::toJsonShot(const QMap <QString, qreal> shot)
 { 
-    if (!_magic->getPlayers().contains(_magic->getNickname()))
-    {
+    if (!_magic->getPlayers().contains(_magic->getNickname())) {
         return;
     }
 
@@ -201,13 +183,11 @@ void WorkJson::toJsonResurrection()
 
 Magic *WorkJson::setMagic()
 {
-    if (_magic)
-    {
+    if (_magic) {
         _magic->deleteLater();
     }
 
-    if (!_magic)
-    {
+    if (!_magic) {
         _magic = new Magic(this);
     }
 

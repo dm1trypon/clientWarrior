@@ -13,7 +13,9 @@ Widget::Widget(QWidget *parent) :
 {
     ui->setupUi(this);
     createElements();
-    connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
+    connect(&WorkJson::Instance(), &WorkJson::signalConnected,
+            this, &Widget::onConnected);
+
     setAttribute(Qt::WA_KeyCompression);
 }
 
@@ -24,8 +26,7 @@ Widget::~Widget()
 
 void Widget::setResolution(const int id)
 {
-    if (!_resolution.isEmpty())
-    {
+    if (!_resolution.isEmpty()) {
         _resolution.clear();
     }
 
@@ -57,7 +58,8 @@ void Widget::createElements()
     resolutionInit();
     setResolutionDefault();
 
-    connect(_resolutionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Widget::setResolution);
+    connect(_resolutionBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &Widget::setResolution);
 
     _lineEditNickname = new QLineEdit();
     _lineEditHost = new QLineEdit();
@@ -66,7 +68,8 @@ void Widget::createElements()
     _lineEditPort->setText("44444");
 
     _buttonConnect = new QPushButton("Connect");
-    connect(_buttonConnect, &QPushButton::clicked, this, &Widget::connectToServer);
+    connect(_buttonConnect, &QPushButton::clicked,
+            this, &Widget::connectToServer);
 
     _buttonTypeWindow = new QPushButton("Fullscreen");
     connect(_buttonTypeWindow, &QPushButton::clicked, this, &Widget::typeWindow);
@@ -108,16 +111,14 @@ void Widget::resolutionInit()
 
 bool Widget::eventFilter(QObject *target, QEvent *event)
 {
-    if (!_scene)
-    {
+    if (!_scene) {
         return false;
     }
 
-    if (target == _scene)
-    {
-        if (event->type() == QEvent::GraphicsSceneMouseMove)
-        {
-            const QGraphicsSceneMouseEvent* const cursor = static_cast<const QGraphicsSceneMouseEvent*>(event);
+    if (target == _scene) {
+        if (event->type() == QEvent::GraphicsSceneMouseMove) {
+            const QGraphicsSceneMouseEvent* const cursor
+                    = static_cast<const QGraphicsSceneMouseEvent*>(event);
 
             WorkJson::Instance().toJsonCursor(cursor->scenePos());
         }
@@ -134,20 +135,10 @@ void Widget::onConnected()
     createScene();
     _scene->installEventFilter(this);
 
-    QMap <QString, qreal> sceneCenter;
-    sceneCenter.insert("x", _scene->width() / 2);
-    sceneCenter.insert("y", _scene->height() / 2);
-
-    qDebug() << "before _magic";
-    _magic->setSceneCenter(sceneCenter);
-    qDebug() << "after _magic";
-
     _scene->setStickyFocus(true);
     _view->setScene(_scene);
 
-    qDebug() << "before _magic";
     _magic->setScene(_scene);
-    qDebug() << "after _magic";
 
     _view->show();
     _view->setSceneRect(_scene->sceneRect());
@@ -162,13 +153,11 @@ void Widget::onConnected()
     _buttonConnect->hide();
     _buttonTypeWindow->hide();
     _mainLayout->setMargin(0);
-    qDebug() << "end onConnected()";
 }
 
 void Widget::createScene()
 {
-    if (_fullscreen)
-    {
+    if (_fullscreen) {
         const QRect desktop = QApplication::desktop()->screenGeometry();
 
         _scene = new QGraphicsScene(0, 0,
@@ -189,8 +178,7 @@ void Widget::createScene()
 
 void Widget::typeWindow()
 {
-    if (_fullscreen)
-    {
+    if (_fullscreen) {
         _fullscreen = false;
         _buttonTypeWindow->setText("Fullscreen");
 
@@ -207,18 +195,15 @@ void Widget::connectToServer()
     _port = _lineEditPort->text();
     _nickname = _lineEditNickname->text();
 
-    if (_host.isEmpty())
-    {
+    if (_host.isEmpty()) {
         return;
     }
 
-    if (_port.isEmpty())
-    {
+    if (_port.isEmpty()) {
         return;
     }
 
-    if (_nickname.isEmpty())
-    {
+    if (_nickname.isEmpty()) {
         return;
     }
 

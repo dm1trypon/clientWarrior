@@ -5,13 +5,14 @@
 #include <QDebug>
 #include <QGraphicsPixmapItem>
 #include <QFont>
+#include <QRectF>
+#include <QPointF>
 
-HUD::HUD(const QMap<QString, qreal> position, const QMap<QString, qreal> size) :
-    QObject(), QGraphicsPixmapItem (nullptr),
-    _size(size)
+HUD::HUD(QPointF position, const QRectF sceneProp) :
+    QObject(), QGraphicsPixmapItem (nullptr)
 {
-    setPixmap(QPixmap(PATH_TO_HUD_IMG).scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
-    setPos(position["x"], position["y"]);
+    setPixmap(QPixmap(PATH_TO_HUD_IMG).scaled(static_cast<int>(sceneProp.width()), static_cast<int>(sceneProp.height())));
+    setPos(position.rx(), position.ry());
     setZValue(5);
 }
 
