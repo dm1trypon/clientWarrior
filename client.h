@@ -4,24 +4,22 @@
 #include <QtCore/QObject>
 #include <QtWebSockets/QWebSocket>
 
-class Client : public QObject
-{
+class Client : public QObject {
     Q_OBJECT
 public:
-    explicit Client(const QUrl &url, QObject *parent = nullptr);
+    explicit Client(const QUrl& url, QObject* parent = nullptr);
 
 signals:
     void closed();
 
 private slots:
     void onConnected();
-    void onTextMessageReceived(const QString &message);
-    void onSend(const QString &data);
+    void onTextMessageReceived(const QString& message);
+    void onSend(const QString& data);
 
 private:
     QWebSocket _webSocket;
     QUrl _url;
 };
-
 
 #endif // CLIENT_H

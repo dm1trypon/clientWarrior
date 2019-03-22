@@ -3,13 +3,13 @@
 #include <QJsonArray>
 #include <QDebug>
 
-WorkJson &WorkJson::Instance()
+WorkJson& WorkJson::Instance()
 {
     static WorkJson theSingleInstance;
     return theSingleInstance;
 }
 
-void WorkJson::fromJson(const QString &data)
+void WorkJson::fromJson(const QString& data)
 {
     const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
     const QString method = dataJsonObj.value(METHOD).toString();
@@ -121,7 +121,7 @@ void WorkJson::toJsonCursor(const QPointF cursor)
 
 QString WorkJson::toJsonVerify()
 {
-    const QMap <QString, qreal> resolution = _magic->getResolution();
+    const QMap<QString, qreal> resolution = _magic->getResolution();
 
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", VERIFY);
@@ -135,7 +135,7 @@ QString WorkJson::toJsonVerify()
     return data;
 }
 
-void WorkJson::toJsonKey(const QString &key, const bool hold)
+void WorkJson::toJsonKey(const QString& key, const bool hold)
 {
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "control");
@@ -149,13 +149,13 @@ void WorkJson::toJsonKey(const QString &key, const bool hold)
     emit signalSend(data);
 }
 
-void WorkJson::toJsonShot(const QMap <QString, qreal> shot)
-{ 
+void WorkJson::toJsonShot(const QMap<QString, qreal> shot)
+{
     if (!_magic->getPlayers().contains(_magic->getNickname())) {
         return;
     }
 
-    const QMap <QString, qreal> newShot = _magic->setShot(shot);
+    const QMap<QString, qreal> newShot = _magic->setShot(shot);
 
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "shot");
@@ -181,7 +181,7 @@ void WorkJson::toJsonResurrection()
     emit signalSend(data);
 }
 
-Magic *WorkJson::setMagic()
+Magic* WorkJson::setMagic()
 {
     if (_magic) {
         _magic->deleteLater();
@@ -194,7 +194,7 @@ Magic *WorkJson::setMagic()
     return _magic;
 }
 
-Magic *WorkJson::getMagic()
+Magic* WorkJson::getMagic()
 {
     return _magic;
 }

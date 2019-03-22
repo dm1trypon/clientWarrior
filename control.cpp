@@ -10,7 +10,7 @@ Control::Control()
     keys();
 }
 
-void Control::onHold(QKeyEvent *event, const bool hold)
+void Control::onHold(QKeyEvent* event, const bool hold)
 {
     QString key;
 

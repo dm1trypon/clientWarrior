@@ -8,42 +8,37 @@
 #include <QRectF>
 #include <QPointF>
 
-HUD::HUD(QPointF position, const QRectF sceneProp) :
-    QObject(), QGraphicsPixmapItem (nullptr)
+HUD::HUD(QPointF position, const QRectF sceneProp)
+    : QObject()
+    , QGraphicsPixmapItem(nullptr)
 {
     setPixmap(QPixmap(PATH_TO_HUD_IMG).scaled(static_cast<int>(sceneProp.width()), static_cast<int>(sceneProp.height())));
     setPos(position.rx(), position.ry());
     setZValue(5);
 }
 
-void HUD::addHealth(const int health, const QMap <QString, qreal> position)
+void HUD::addTextElement(const int health, const QString &id, const QMap<QString, qreal> prop, QColor color)
 {
-    QFont _font;
-    _font.setPointSize(position["size"]);
-    _healthHud = new QGraphicsTextItem(QString::number(health), this);
-    _healthHud->setPos(position["x"], position["y"]);
-    _healthHud->setFont(_font);
-    _healthHud->setZValue(5);
-    _healthHud->setDefaultTextColor(Qt::yellow);
+    if (_hudTexts.contains(id)) {
+        qWarning() << "Creation element failed! Item with this name is exist!";
+        return;
+    }
+
+    QFont font;
+    font.setPointSize(static_cast<int>(prop["size"]));
+    QGraphicsTextItem *tElement = new QGraphicsTextItem(QString::number(health), this);
+    tElement->setPos(prop["x"], prop["y"]);
+    tElement->setFont(font);
+    tElement->setZValue(5);
+    tElement->setDefaultTextColor(color);
+    _hudTexts.insert(id, tElement);
 }
 
-QGraphicsTextItem * HUD::getHealth()
+QGraphicsTextItem *HUD::getTextElement(const QString &id)
 {
-    return _healthHud;
-}
+    if (!_hudTexts[id]) {
+        return nullptr;
+    }
 
-void HUD::addScore(const int score, const QMap <QString, qreal> position)
-{
-    QFont _font;
-    _font.setPointSize(position["size"]);
-    _scoreHud = new QGraphicsTextItem(QString::number(score), this);
-    _scoreHud->setPos(position["x"], position["y"]);
-    _scoreHud->setFont(_font);
-    _scoreHud->setZValue(5);
-    _scoreHud->setDefaultTextColor(Qt::green);
-}
-
-QGraphicsTextItem * HUD::getScore()
-{
-    return _scoreHud;
+    return _hudTexts[id];
 }

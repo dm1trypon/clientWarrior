@@ -5,8 +5,9 @@
 #include <QBrush>
 #include <QImage>
 
-Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> size) :
-    QObject(), QGraphicsRectItem (nullptr)
+Scene::Scene(const QMap<QString, qreal> position, const QMap<QString, qreal> size)
+    : QObject()
+    , QGraphicsRectItem(nullptr)
 {
     setRect(position["x"], position["y"], size["width"], size["height"]);
     setZValue(1);
@@ -23,7 +24,7 @@ Scene::Scene(const QMap <QString, qreal> position, const QMap <QString, qreal> s
     connect(&_mouseTimer, &QTimer::timeout, this, &Scene::onPositionCursor);
 }
 
-void Scene::addBorder(const QMap <QString, qreal> position, const QMap <QString, qreal> size)
+void Scene::addBorder(const QMap<QString, qreal> position, const QMap<QString, qreal> size)
 {
     _border = new QGraphicsRectItem();
     _border->setRect(position["x"], position["y"], size["width"], size["height"]);
@@ -36,12 +37,12 @@ void Scene::addBorder(const QMap <QString, qreal> position, const QMap <QString,
     _border->setPen(pen);
 }
 
-QGraphicsRectItem * Scene::getBorder()
+QGraphicsRectItem* Scene::getBorder()
 {
     return _border;
 }
 
-void Scene::setPosition(const QMap <QString, qreal> position)
+void Scene::setPosition(const QMap<QString, qreal> position)
 {
     _position = position;
 
@@ -49,7 +50,7 @@ void Scene::setPosition(const QMap <QString, qreal> position)
     setPos(position["x"], position["y"]);
 }
 
-QMap <QString, qreal> Scene::getPosition()
+QMap<QString, qreal> Scene::getPosition()
 {
     return _position;
 }
@@ -59,26 +60,26 @@ void Scene::onPositionCursor()
     WorkJson::Instance().toJsonShot(_cursor);
 }
 
-void Scene::mousePressEvent(QGraphicsSceneMouseEvent *mouseEvent)
+void Scene::mousePressEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
     setCursorPosition(mouseEvent);
-    _mouseTimer.start(100);
+    _mouseTimer.start(CLICK_SENSITIVITY);
 }
 
-void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *mouseEvent)
+void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
     setCursorPosition(mouseEvent);
     _mouseTimer.stop();
 }
 
-void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *mouseEvent)
+void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent* mouseEvent)
 {
     setCursorPosition(mouseEvent);
 }
 
-void Scene::setCursorPosition(QGraphicsSceneMouseEvent *mouseEvent)
+void Scene::setCursorPosition(QGraphicsSceneMouseEvent* mouseEvent)
 {
-    QMap <QString, qreal> cursor;
+    QMap<QString, qreal> cursor;
     cursor.insert("x", mouseEvent->scenePos().x());
     cursor.insert("y", mouseEvent->scenePos().y());
 

@@ -7,13 +7,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-class WorkJson : public QObject
-{
+class WorkJson : public QObject {
     Q_OBJECT
-
 private:
     WorkJson(const WorkJson& root) = delete;
-    WorkJson& operator = (const WorkJson&) = delete;
+    WorkJson& operator=(const WorkJson&) = delete;
 
     const QString METHOD = "method";
     const QString VERIFY = "verify";
@@ -28,25 +26,24 @@ private:
 
     void toJsonResurrection();
 
-    Magic *_magic = nullptr;
+    Magic* _magic = nullptr;
 
 public:
-    WorkJson(){}
+    WorkJson() {}
     static WorkJson& Instance();
 
-    void fromJson(const QString &data);
-    void toJsonKey(const QString &key, const bool hold);
+    void fromJson(const QString& data);
+    void toJsonKey(const QString& key, const bool hold);
     void toJsonShot(const QMap<QString, qreal> click);
     void toJsonCursor(const QPointF cursor);
 
     QString toJsonVerify();
 
-    Magic *setMagic();
-    Magic *getMagic();
+    Magic* setMagic();
+    Magic* getMagic();
 signals:
-    void signalSend(const QString &);
+    void signalSend(const QString&);
     void signalConnected();
-
 };
 
 #endif // WORKJSON_H

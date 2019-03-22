@@ -4,22 +4,17 @@
 #include <QObject>
 #include <QGraphicsPixmapItem>
 
-class HUD : public QObject, public QGraphicsPixmapItem
-{
+class HUD : public QObject, public QGraphicsPixmapItem {
 public:
     HUD(QPointF position, const QRectF sceneProp);
 
-    void addScore(const int score, const QMap<QString, qreal> position);
-    void addHealth(const int health, const QMap <QString, qreal> position);
+    void addTextElement(const int health, const QString &id, const QMap<QString, qreal> prop, QColor color);
 
-    QGraphicsTextItem *getHealth();
-    QGraphicsTextItem *getScore();
-
+    QGraphicsTextItem* getTextElement(const QString &id);
 private:
     const QString PATH_TO_HUD_IMG = ":/img/hud.png";
 
-    QGraphicsTextItem *_scoreHud;
-    QGraphicsTextItem *_healthHud;
+    QMap<QString, QGraphicsTextItem*> _hudTexts;
 };
 
 #endif // BAR_H

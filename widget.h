@@ -9,6 +9,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QRect>
 
 namespace Ui {
 class Widget;
@@ -16,16 +17,14 @@ class Widget;
 
 class Magic;
 
-class Widget : public QWidget
-{
+class Widget : public QWidget {
     Q_OBJECT
-
 public:
-    explicit Widget(QWidget *parent = nullptr);
+    explicit Widget(QWidget* parent = nullptr);
     ~Widget();
 
 protected:
-    bool eventFilter(QObject *target, QEvent *event);
+    bool eventFilter(QObject* target, QEvent* event);
 
 private slots:
     void connectToServer();
@@ -36,24 +35,26 @@ private slots:
 private:
     const int PADDING_VIEW = 2;
 
-    Ui::Widget *ui;
-    QGraphicsScene *_scene;
-    QGraphicsView *_view;
-    QVBoxLayout *_mainLayout;
-    QPushButton *_buttonConnect;
-    QPushButton *_buttonTypeWindow;
-    QLineEdit *_lineEditNickname;
-    QLineEdit *_lineEditHost;
-    QLineEdit *_lineEditPort;
-    QComboBox *_resolutionBox;
-    QLabel *_labelNickname;
-    QLabel *_labelHost;
-    QLabel *_labelPort;
-    QLabel *_labelResolution;
+    QRect _desktop;
+
+    Ui::Widget* ui;
+    QGraphicsScene* _scene;
+    QGraphicsView* _view;
+    QVBoxLayout* _mainLayout;
+    QPushButton* _buttonConnect;
+    QPushButton* _buttonTypeWindow;
+    QLineEdit* _lineEditNickname;
+    QLineEdit* _lineEditHost;
+    QLineEdit* _lineEditPort;
+    QComboBox* _resolutionBox;
+    QLabel* _labelNickname;
+    QLabel* _labelHost;
+    QLabel* _labelPort;
+    QLabel* _labelResolution;
     QString _host;
     QString _port;
     QString _nickname;
-    QMap <QString, qreal> _resolution;
+    QMap<QString, qreal> _resolution;
 
     bool _fullscreen = false;
 
@@ -62,7 +63,7 @@ private:
     void setResolutionDefault();
     void resolutionInit();
 
-    Magic *_magic;
+    Magic* _magic;
 };
 
 #endif // WIDGET_H

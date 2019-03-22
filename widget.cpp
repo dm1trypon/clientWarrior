@@ -6,15 +6,16 @@
 #include <QDesktopWidget>
 #include <QGLWidget>
 
-Widget::Widget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::Widget),
-    _magic(WorkJson::Instance().setMagic())
+Widget::Widget(QWidget* parent)
+    : QWidget(parent)
+    , _desktop(QApplication::desktop()->screenGeometry())
+    , ui(new Ui::Widget)
+    , _magic(WorkJson::Instance().setMagic())
 {
     ui->setupUi(this);
     createElements();
     connect(&WorkJson::Instance(), &WorkJson::signalConnected,
-            this, &Widget::onConnected);
+        this, &Widget::onConnected);
 
     setAttribute(Qt::WA_KeyCompression);
 }
@@ -30,8 +31,8 @@ void Widget::setResolution(const int id)
         _resolution.clear();
     }
 
-    QString value = _resolutionBox->itemData(id).toString();
-    QStringList resolution = value.split(":");
+    const QString value = _resolutionBox->itemData(id).toString();
+    const QStringList resolution = value.split(":");
     _resolution.insert("width", resolution[0].toDouble());
     _resolution.insert("height", resolution[1].toDouble());
 
@@ -59,7 +60,7 @@ void Widget::createElements()
     setResolutionDefault();
 
     connect(_resolutionBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this, &Widget::setResolution);
+        this, &Widget::setResolution);
 
     _lineEditNickname = new QLineEdit();
     _lineEditHost = new QLineEdit();
@@ -69,7 +70,7 @@ void Widget::createElements()
 
     _buttonConnect = new QPushButton("Connect");
     connect(_buttonConnect, &QPushButton::clicked,
-            this, &Widget::connectToServer);
+        this, &Widget::connectToServer);
 
     _buttonTypeWindow = new QPushButton("Fullscreen");
     connect(_buttonTypeWindow, &QPushButton::clicked, this, &Widget::typeWindow);
@@ -91,6 +92,18 @@ void Widget::createElements()
 
 void Widget::setResolutionDefault()
 {
+    if (!_resolution.isEmpty()) {
+        _resolution.clear();
+    }
+
+    if (_fullscreen) {
+        _resolution.insert("width", _desktop.width());
+        _resolution.insert("height", _desktop.height());
+
+        _magic->setResolution(_resolution);
+        return;
+    }
+
     _resolution.insert("width", 640);
     _resolution.insert("height", 480);
 
@@ -109,7 +122,7 @@ void Widget::resolutionInit()
     _resolutionBox->addItem("1920 x 1080", QVariant("1920:1080"));
 }
 
-bool Widget::eventFilter(QObject *target, QEvent *event)
+bool Widget::eventFilter(QObject* target, QEvent* event)
 {
     if (!_scene) {
         return false;
@@ -118,7 +131,7 @@ bool Widget::eventFilter(QObject *target, QEvent *event)
     if (target == _scene) {
         if (event->type() == QEvent::GraphicsSceneMouseMove) {
             const QGraphicsSceneMouseEvent* const cursor
-                    = static_cast<const QGraphicsSceneMouseEvent*>(event);
+                = static_cast<const QGraphicsSceneMouseEvent*>(event);
 
             WorkJson::Instance().toJsonCursor(cursor->scenePos());
         }
@@ -130,7 +143,7 @@ bool Widget::eventFilter(QObject *target, QEvent *event)
 void Widget::onConnected()
 {
     setFixedSize(static_cast<int>(_resolution["width"]),
-            static_cast<int>(_resolution["height"]));
+        static_cast<int>(_resolution["height"]));
 
     createScene();
     _scene->installEventFilter(this);
@@ -158,12 +171,10 @@ void Widget::onConnected()
 void Widget::createScene()
 {
     if (_fullscreen) {
-        const QRect desktop = QApplication::desktop()->screenGeometry();
-
         _scene = new QGraphicsScene(0, 0,
-                                    desktop.width() - PADDING_VIEW,
-                                    desktop.height() - PADDING_VIEW,
-                                    this);
+            _desktop.width() - PADDING_VIEW,
+            _desktop.height() - PADDING_VIEW,
+            this);
 
         showFullScreen();
 
@@ -171,22 +182,25 @@ void Widget::createScene()
     }
 
     _scene = new QGraphicsScene(0, 0,
-                                _resolution["width"] - PADDING_VIEW,
-                                _resolution["height"] - PADDING_VIEW,
-                                this);
+        _resolution["width"] - PADDING_VIEW,
+        _resolution["height"] - PADDING_VIEW,
+        this);
 }
 
 void Widget::typeWindow()
 {
     if (_fullscreen) {
         _fullscreen = false;
+        setResolutionDefault();
         _buttonTypeWindow->setText("Fullscreen");
 
         return;
     }
 
     _fullscreen = true;
+    setResolutionDefault();
     _buttonTypeWindow->setText("Window");
+    qDebug() << _resolution;
 }
 
 void Widget::connectToServer()
