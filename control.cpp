@@ -31,6 +31,14 @@ void Control::onHold(QKeyEvent* event, const bool hold)
         key = "down";
         break;
 
+    case Qt::Key_1:
+        WorkJson::Instance().getMagic()->setWeapon("blaster");
+        break;
+
+    case Qt::Key_2:
+        WorkJson::Instance().getMagic()->setWeapon("plazma");
+        break;
+
     case Qt::Key_Escape:
         qApp->exit();
         break;

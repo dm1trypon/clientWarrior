@@ -18,6 +18,16 @@ QMap<QString, qreal> Magic::itemPos(QPointF pos, const qreal size)
     return itemPos;
 }
 
+void Magic::setWeapon(const QString &weapon)
+{
+    _weapon = weapon;
+}
+
+QString Magic::getWeapon()
+{
+    return _weapon;
+}
+
 void Magic::toHealth(const int health)
 {
     if (!_healthHud) {
@@ -153,13 +163,13 @@ void Magic::toBullets(const QJsonObject dataJsonObj)
 
     foreach (QJsonValue bulletValue, bulletsJsArr) {
         const QJsonObject bulletJsObj = bulletValue.toObject();
-        const QString nickname = bulletJsObj.value("nickname").toString();
+        const QString weapon = bulletJsObj.value("weapon").toString();
         const int id = bulletJsObj.value("id_bullet").toInt();
         const QList<QMap<QString, qreal> > bulletCfg = configureObj(bulletJsObj);
         const QMap<QString, qreal> position = _camera.setPositionObjects(bulletCfg.first());
 
         if (!_bullets.contains(id)) {
-            Bullet* bullet = new Bullet(nickname, id, position, bulletCfg.last());
+            Bullet* bullet = new Bullet(weapon, position, bulletCfg.last());
             _scene->addItem(bullet);
             _bullets.insert(id, bullet);
         }

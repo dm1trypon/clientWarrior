@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>img/player.png</file>
-        <file>img/scene.jpg</file>
+        <file>img/blaster.png</file>
         <file>img/hud.png</file>
-        <file>img/bullet.png</file>
-        <file>img/bullet.webp</file>
+        <file>img/player.png</file>
+        <file>img/plazma.png</file>
+        <file>img/scene.jpg</file>
     </qresource>
 </RCC>

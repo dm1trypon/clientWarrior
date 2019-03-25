@@ -35,6 +35,8 @@ public:
     QMap<QString, qreal> getResolution(); // get resolution game
     QMap<QString, qreal> setShot(const QMap<QString, qreal> shot); // sets the mouse coordinates relative to the player
 
+    void setWeapon(const QString &weapon);
+    QString getWeapon();
 private:
     const int TEMP_WIDTH = 1920;
     const int TEMP_HEIGHT = 1080;
@@ -43,6 +45,7 @@ private:
     const qreal SIZE_ITEM_HUD = 30;
 
     QString _nickname;
+    QString _weapon = "blaster";
 
     QMap<QString, Player*> _players;
     QMap<int, Bullet*> _bullets;
