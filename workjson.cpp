@@ -160,6 +160,7 @@ void WorkJson::toJsonShot(const QMap<QString, qreal> shot)
     QJsonObject dataJsonObj;
     dataJsonObj.insert("method", "shot");
     dataJsonObj.insert("nickname", _magic->getNickname());
+    dataJsonObj.insert("weapon", "blaster");
     dataJsonObj.insert("x", newShot["x"]);
     dataJsonObj.insert("y", newShot["y"]);
 
