@@ -5,5 +5,6 @@
         <file>img/player.png</file>
         <file>img/plazma.png</file>
         <file>img/scene.jpg</file>
+        <file>img/machine_gun.png</file>
     </qresource>
 </RCC>

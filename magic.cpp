@@ -165,12 +165,13 @@ void Magic::toBullets(const QJsonObject dataJsonObj)
         const QJsonObject bulletJsObj = bulletValue.toObject();
         const QString weapon = bulletJsObj.value("weapon").toString();
         const int id = bulletJsObj.value("id_bullet").toInt();
-        const QList<QMap<QString, qreal> > bulletCfg = configureObj(bulletJsObj);
+        const QList<QMap<QString, qreal>> bulletCfg = configureObj(bulletJsObj);
         const QMap<QString, qreal> position = _camera.setPositionObjects(bulletCfg.first());
 
         if (!_bullets.contains(id)) {
             Bullet* bullet = new Bullet(weapon, position, bulletCfg.last());
             _scene->addItem(bullet);
+            bullet->setRotation(bulletJsObj.value("rotation").toDouble());
             _bullets.insert(id, bullet);
         }
 
