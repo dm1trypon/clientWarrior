@@ -30,8 +30,8 @@ Client::Client(const QUrl& url, QObject* parent)
 void Client::onConnected()
 {
     qDebug().noquote() << "Сonnected to " + _url.toDisplayString();
-    connect(&_webSocket, &QWebSocket::textMessageReceived,
-        this, &Client::onTextMessageReceived);
+
+    connect(&_webSocket, &QWebSocket::textMessageReceived, this, &Client::onTextMessageReceived);
 }
 
 void Client::onSend(const QString& data)

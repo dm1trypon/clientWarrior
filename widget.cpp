@@ -7,15 +7,14 @@
 #include <QGLWidget>
 
 Widget::Widget(QWidget* parent)
-    : QWidget(parent)
-    , _desktop(QApplication::desktop()->screenGeometry())
-    , ui(new Ui::Widget)
-    , _magic(WorkJson::Instance().setMagic())
+    : QWidget(parent),
+      _desktop(QApplication::desktop()->screenGeometry()),
+      ui(new Ui::Widget),
+      _magic(WorkJson::Instance().setMagic())
 {
     ui->setupUi(this);
     createElements();
-    connect(&WorkJson::Instance(), &WorkJson::signalConnected,
-        this, &Widget::onConnected);
+    connect(&WorkJson::Instance(), &WorkJson::signalConnected, this, &Widget::onConnected);
 
     setAttribute(Qt::WA_KeyCompression);
 }
@@ -41,13 +40,13 @@ void Widget::setResolution(const int id)
 
 void Widget::createElements()
 {
+    _mainLayout = new QVBoxLayout;
+
     _view = new QGraphicsView(this);
     _view->viewport()->installEventFilter(this);
     _view->setViewport(new QGLWidget);
     _view->setBackgroundBrush(QBrush(Qt::black, Qt::SolidPattern));
     _view->hide();
-
-    _mainLayout = new QVBoxLayout;
 
     _labelNickname = new QLabel("Nickname:");
     _labelHost = new QLabel("Host:");
@@ -59,8 +58,7 @@ void Widget::createElements()
     resolutionInit();
     setResolutionDefault();
 
-    connect(_resolutionBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-        this, &Widget::setResolution);
+    connect(_resolutionBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &Widget::setResolution);
 
     _lineEditNickname = new QLineEdit();
     _lineEditHost = new QLineEdit();
@@ -69,10 +67,11 @@ void Widget::createElements()
     _lineEditPort->setText("44444");
 
     _buttonConnect = new QPushButton("Connect");
-    connect(_buttonConnect, &QPushButton::clicked,
-        this, &Widget::connectToServer);
+
+    connect(_buttonConnect, &QPushButton::clicked, this, &Widget::connectToServer);
 
     _buttonTypeWindow = new QPushButton("Fullscreen");
+
     connect(_buttonTypeWindow, &QPushButton::clicked, this, &Widget::typeWindow);
 
     _mainLayout->addWidget(_labelNickname);
@@ -101,6 +100,7 @@ void Widget::setResolutionDefault()
         _resolution.insert("height", _desktop.height());
 
         _magic->setResolution(_resolution);
+
         return;
     }
 
@@ -125,36 +125,38 @@ void Widget::resolutionInit()
 bool Widget::eventFilter(QObject* target, QEvent* event)
 {
     if (!_scene) {
-        return false;
+        return QWidget::eventFilter(target, event);
     }
 
-    if (target == _scene) {
-        if (event->type() == QEvent::GraphicsSceneMouseMove) {
-            const QGraphicsSceneMouseEvent* const cursor
-                = static_cast<const QGraphicsSceneMouseEvent*>(event);
-
-            WorkJson::Instance().toJsonCursor(cursor->scenePos());
-        }
+    if (target != _scene) {
+        return QWidget::eventFilter(target, event);
     }
+
+    if (event->type() != QEvent::GraphicsSceneMouseMove) {
+        return QWidget::eventFilter(target, event);
+    }
+
+    const QGraphicsSceneMouseEvent* const cursor = static_cast<const QGraphicsSceneMouseEvent*>(event);
+
+    WorkJson::Instance().toJsonCursor(cursor->scenePos());
 
     return QWidget::eventFilter(target, event);
 }
 
 void Widget::onConnected()
 {
-    setFixedSize(static_cast<int>(_resolution["width"]),
-        static_cast<int>(_resolution["height"]));
+    setFixedSize(static_cast<int>(_resolution["width"]), static_cast<int>(_resolution["height"]));
 
     createScene();
+
     _scene->installEventFilter(this);
-
     _scene->setStickyFocus(true);
-    _view->setScene(_scene);
-
     _magic->setScene(_scene);
 
+    _view->setScene(_scene);
     _view->show();
     _view->setSceneRect(_scene->sceneRect());
+
     _labelNickname->hide();
     _labelHost->hide();
     _labelPort->hide();
@@ -171,36 +173,33 @@ void Widget::onConnected()
 void Widget::createScene()
 {
     if (_fullscreen) {
-        _scene = new QGraphicsScene(0, 0,
-            _desktop.width() - PADDING_VIEW,
-            _desktop.height() - PADDING_VIEW,
-            this);
+        _scene = new QGraphicsScene(0, 0, _desktop.width() - PADDING_VIEW, _desktop.height() - PADDING_VIEW, this);
 
         showFullScreen();
 
         return;
     }
 
-    _scene = new QGraphicsScene(0, 0,
-        _resolution["width"] - PADDING_VIEW,
-        _resolution["height"] - PADDING_VIEW,
-        this);
+    _scene = new QGraphicsScene(0, 0, _resolution["width"] - PADDING_VIEW, _resolution["height"] - PADDING_VIEW, this);
 }
 
 void Widget::typeWindow()
 {
     if (_fullscreen) {
         _fullscreen = false;
+
         setResolutionDefault();
+
         _buttonTypeWindow->setText("Fullscreen");
 
         return;
     }
 
     _fullscreen = true;
+
     setResolutionDefault();
+
     _buttonTypeWindow->setText("Window");
-    qDebug() << _resolution;
 }
 
 void Widget::connectToServer()
@@ -222,5 +221,6 @@ void Widget::connectToServer()
     }
 
     _magic->setNickname(_nickname);
+
     new Client(QUrl("ws://" + _host + ":" + _port));
 }

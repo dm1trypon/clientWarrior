@@ -24,8 +24,6 @@ private:
 
     bool checkFields(const QJsonObject dataJsonObj);
 
-    void toJsonResurrection();
-
     Magic* _magic = nullptr;
 
 public:

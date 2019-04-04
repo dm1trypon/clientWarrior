@@ -4,7 +4,9 @@ Bullet::Bullet(const QString &weapon, const QMap<QString, qreal> position, const
     : QObject()
     , QGraphicsPixmapItem(nullptr)
 {
-    setPixmap(QPixmap(PATH_TO_BULLET_IMG + weapon + ".png").scaled(static_cast<int>(size["width"]), static_cast<int>(size["height"])));
+    setPixmap(QPixmap(PATH_TO_BULLET_IMG + weapon + ".png").scaled(static_cast<int>(size["width"]),
+              static_cast<int>(size["height"])));
+
     setPos(position["x"], position["y"]);
     setZValue(2);
     setTransformOriginPoint(size["width"] / 2, size["height"] / 2);

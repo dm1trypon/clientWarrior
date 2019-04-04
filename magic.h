@@ -28,6 +28,7 @@ public:
     void draw(const QJsonObject dataJsonObj); // draw objects on game scene
     void delPlayer(const QString& nickname); // delete players by nickname
     void delBullets(const int id); // delete bullets by id
+    void setWeapon(const QString &weapon);
 
     QMap<QString, Player*> getPlayers(); // get all players on the game scene
     QMap<int, Bullet*> getBullets(); // get all bullets on the game scene
@@ -35,8 +36,10 @@ public:
     QMap<QString, qreal> getResolution(); // get resolution game
     QMap<QString, qreal> setShot(const QMap<QString, qreal> shot); // sets the mouse coordinates relative to the player
 
-    void setWeapon(const QString &weapon);
     QString getWeapon();
+
+    bool isMine(const QString& nickname);
+
 private:
     const int TEMP_WIDTH = 1920;
     const int TEMP_HEIGHT = 1080;
@@ -60,11 +63,10 @@ private:
     HUD* _hud;
 
     bool isStop(const QPointF posNew, const QPointF posOld);
-    bool isMine(const QString& nickname);
 
-    void toScene(const QJsonObject dataJsonObj);
-    void toPlayers(const QJsonObject dataJsonObj);
-    void toBullets(const QJsonObject dataJsonObj);
+    void toScene(const QJsonObject sceneJsObj);
+    void toPlayers(const QJsonArray playersJsonArr);
+    void toBullets(const QJsonArray bulletsJsArr);
     void toHealth(const int health);
     void toScore(const int score);
 
@@ -74,6 +76,11 @@ private:
     QMap<QString, qreal> setPositionItems(QMap<QString, qreal> itemHUD);
     QMap<QString, qreal> itemPos(QPointF pos, const qreal size);
     QList<QMap<QString, qreal> > configureObj(const QJsonObject itemJsObj);
+    bool isOutView(const QMap<QString, qreal> position);
+    void createBullet(const QJsonValue bulletValue, const QMap<QString, qreal> position,
+                      const QList<QMap<QString, qreal> > bulletCfg);
+    void createPlayer(const QString &nickname, const QMap<QString, qreal> position, const QList<QMap<QString, qreal> > playerCfg);
+    void updateMinePlayer(const QList<QMap<QString, qreal> > playerCfg, const QPair<int, int> dataHud);
 };
 
 #endif // MAGIC_H

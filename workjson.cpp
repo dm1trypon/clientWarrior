@@ -13,7 +13,6 @@ void WorkJson::fromJson(const QString& data)
 {
     const QJsonObject dataJsonObj = QJsonDocument::fromJson(data.toUtf8()).object();
     const QString method = dataJsonObj.value(METHOD).toString();
-    const QString myName = _magic->getNickname();
 
     QString nickname;
 
@@ -26,7 +25,7 @@ void WorkJson::fromJson(const QString& data)
     }
 
     if (method == CONNECTION) {
-        if (nickname != myName) {
+        if (!_magic->isMine(nickname)) {
             return;
         }
 
@@ -34,24 +33,11 @@ void WorkJson::fromJson(const QString& data)
     }
 
     if (method == DISCONNECTION) {
-        if (!_magic->getPlayers().contains(nickname)) {
-            qWarning() << "Warning! Player is not exist for delete from game scene!";
-
-            return;
-        }
-
         _magic->delPlayer(nickname);
     }
 
     if (method == REMOVE) {
-        const int id = dataJsonObj.value("id_bullet").toInt();
-
-        if (!_magic->getBullets().contains(id)) {
-            qWarning() << "Warning! Bullet is not exist for delete from game scene!";
-            return;
-        }
-
-        _magic->delBullets(id);
+        _magic->delBullets(dataJsonObj.value("id_bullet").toInt());
     }
 
     if (method == OBJECTS) {
@@ -60,23 +46,6 @@ void WorkJson::fromJson(const QString& data)
         }
 
         _magic->draw(dataJsonObj);
-    }
-
-    if (method == DIE) {
-        if (!_magic->getPlayers().contains(nickname)) {
-            qWarning() << "Warning! Player is not exist for delete from game scene!";
-            return;
-        }
-
-        _magic->delPlayer(nickname);
-
-        if (myName != nickname) {
-            return;
-        }
-
-        toJsonResurrection();
-
-        return;
     }
 }
 
@@ -87,12 +56,22 @@ bool WorkJson::checkFields(const QJsonObject dataJsonObj)
         return false;
     }
 
+    if (!dataJsonObj.contains("bullets")) {
+        qWarning() << "Warning! Field 'bullets' is not exist!";
+        return false;
+    }
+
     if (!dataJsonObj.contains("scene")) {
         qWarning() << "Warning! Field 'scene' is not exist!";
         return false;
     }
 
     if (!dataJsonObj.value("players").isArray()) {
+        qWarning() << "Warning! Field 'players' is not array!";
+        return false;
+    }
+
+    if (!dataJsonObj.value("bullets").isArray()) {
         qWarning() << "Warning! Field 'players' is not array!";
         return false;
     }
@@ -163,18 +142,6 @@ void WorkJson::toJsonShot(const QMap<QString, qreal> shot)
     dataJsonObj.insert("weapon", _magic->getWeapon());
     dataJsonObj.insert("x", newShot["x"]);
     dataJsonObj.insert("y", newShot["y"]);
-
-    const QJsonDocument dataJsonDoc(dataJsonObj);
-    const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
-
-    emit signalSend(data);
-}
-
-void WorkJson::toJsonResurrection()
-{
-    QJsonObject dataJsonObj;
-    dataJsonObj.insert("method", "resurrection");
-    dataJsonObj.insert("nickname", _magic->getNickname());
 
     const QJsonDocument dataJsonDoc(dataJsonObj);
     const QString data = dataJsonDoc.toJson(QJsonDocument::Compact);
