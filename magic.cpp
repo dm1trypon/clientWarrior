@@ -160,10 +160,11 @@ void Magic::toBullets(const QJsonArray bulletsJsArr)
             createBullet(bulletValue, position, bulletCfg);
         }
 
-        if (isOutView(position)) {
-            continue;
-        }
+//        if (isOutView(position)) {
+//            continue;
+//        }
 
+        qDebug() << position;
         _bullets[id]->setPosition(position);
     }
 }
@@ -245,7 +246,7 @@ void Magic::delBullets(const int id)
         return;
     }
 
-    _bullets[id]->deleteLater();
+    delete _bullets[id];
     _bullets.remove(id);
 }
 
